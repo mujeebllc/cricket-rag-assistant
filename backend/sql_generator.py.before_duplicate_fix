@@ -1,0 +1,799 @@
+import re
+import time
+
+from langchain_ollama import OllamaLLM
+
+from rag.retriever import retrieve_schema
+from prompts.system_prompt import SYSTEM_PROMPT
+
+
+# ============================================================
+# LOAD LLM
+# ============================================================
+
+llm = OllamaLLM(
+    model="qwen2.5:7b",
+    temperature=0
+)
+
+
+# ============================================================
+# KNOWN DATABASE TABLES
+# ============================================================
+
+KNOWN_TABLES = {
+    "RECOVER_YOUR_DATA",
+    "article",
+    "article_group",
+    "article_tags",
+    "association",
+    "ball_by_ball",
+    "batting_detail",
+    "batting_stats",
+    "bowling_detail",
+    "bowling_stats",
+    "budget",
+    "category",
+    "city",
+    "city_cricket_association",
+    "club",
+    "comment",
+    "country",
+    "cricket_association",
+    "current_day",
+    "department",
+    "edition",
+    "event",
+    "fantasy_prediction",
+    "fantasy_result",
+    "fantasy_user",
+    "feedback",
+    "fow",
+    "gallery",
+    "ground",
+    "group",
+    "group_screen",
+    "innings",
+    "inreport",
+    "live_ball_by_ball",
+    "live_batting_detail",
+    "live_bowling_detail",
+    "live_fow",
+    "live_innings",
+    "live_match_over",
+    "live_match_squad",
+    "live_matches",
+    "livescore",
+    "match_comments",
+    "match_over",
+    "match_squad",
+    "matches",
+    "media_item",
+    "news",
+    "object_pics",
+    "offer",
+    "official",
+    "outreport",
+    "outreport_data",
+    "photo",
+    "player",
+    "player_follower",
+    "point_table",
+    "points",
+    "posts",
+    "province",
+    "region",
+    "round_team",
+    "scorer",
+    "scorer_setup_sync_event",
+    "scorer_tournament",
+    "screen",
+    "season",
+    "section",
+    "section_head",
+    "squad",
+    "sw_user",
+    "tags",
+    "team",
+    "temp",
+    "test_table",
+    "tournament",
+    "tournament_club",
+    "tournament_round",
+    "user_group",
+    "users",
+}
+
+
+# ============================================================
+# DIRECT PLAYER BATTING STATISTICS
+#
+# Handles:
+# - How many runs has Babar Azam scored?
+# - How many fours has Babar Azam hit?
+# - How many sixes has Babar Azam hit?
+# - How many balls has Babar Azam faced?
+#
+# These bypass RAG + LLM for speed and reliability.
+# ============================================================
+
+def generate_direct_player_stat_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+
+        # RUNS
+        (r"how many runs has (.+?) scored\??$", "Runs", "TotalRuns"),
+        (r"how many runs did (.+?) score\??$", "Runs", "TotalRuns"),
+        (r"total runs (?:of|for) (.+?)\??$", "Runs", "TotalRuns"),
+
+        # FOURS
+        (r"how many fours has (.+?) hit\??$", "Fours", "TotalFours"),
+        (r"how many fours did (.+?) hit\??$", "Fours", "TotalFours"),
+        (r"total fours (?:of|for) (.+?)\??$", "Fours", "TotalFours"),
+
+        # SIXES
+        (r"how many sixes has (.+?) hit\??$", "Sixes", "TotalSixes"),
+        (r"how many sixes did (.+?) hit\??$", "Sixes", "TotalSixes"),
+        (r"total sixes (?:of|for) (.+?)\??$", "Sixes", "TotalSixes"),
+
+        # BALLS FACED
+        (r"how many balls has (.+?) faced\??$", "BallsFaced", "TotalBallsFaced"),
+        (r"how many balls did (.+?) face\??$", "BallsFaced", "TotalBallsFaced"),
+        (r"total balls (?:faced|of|for) (.+?)\??$", "BallsFaced", "TotalBallsFaced"),
+    ]
+
+    for pattern, column, alias in patterns:
+
+        match = re.match(pattern, question_lower, re.IGNORECASE)
+
+        if match:
+
+            player_name = match.group(1).strip()
+            player_name = player_name.rstrip("?.!")
+            player_name_sql = player_name.replace("'", "''")
+
+            sql = (
+                f"SELECT COALESCE(SUM(bs.{column}), 0) AS {alias} "
+                "FROM batting_stats bs "
+                "JOIN player p "
+                "ON bs.PlayerId = p.PlayerId "
+                f"WHERE LOWER(p.FullName) = LOWER('{player_name_sql}');"
+            )
+
+            print("\n========== DIRECT PLAYER STAT RULE ==========\n")
+            print(f"Detected player: {player_name}")
+            print(f"Requested field: {column}")
+            print("All matching players will be included.")
+            print(f"Generated SQL: {sql}")
+            print("\n=============================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT PLAYER LIST BY COUNTRY
+# ============================================================
+
+def generate_direct_player_list_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        r"list players from (.+?)\??$",
+        r"show players from (.+?)\??$",
+        r"which players are from (.+?)\??$",
+        r"show me players from (.+?)\??$",
+    ]
+
+    for pattern in patterns:
+
+        match = re.match(pattern, question_lower, re.IGNORECASE)
+
+        if match:
+
+            country_name = match.group(1).strip()
+            country_name = country_name.rstrip("?.!")
+            country_name_sql = country_name.replace("'", "''")
+
+            sql = (
+                "SELECT DISTINCT FullName "
+                "FROM player "
+                f"WHERE LOWER(Country) = LOWER('{country_name_sql}') "
+                "AND FullName IS NOT NULL "
+                "AND TRIM(FullName) <> '' "
+                "ORDER BY FullName;"
+            )
+
+            print("\n========== DIRECT PLAYER LIST RULE ==========\n")
+            print(f"Detected country: {country_name}")
+            print(f"Generated SQL: {sql}")
+            print("\n=============================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT PLAYER COUNT BY COUNTRY
+# ============================================================
+
+def generate_direct_player_country_count_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        r"how many players are from (.+?)\??$",
+        r"how many players from (.+?)\??$",
+        r"count players from (.+?)\??$",
+    ]
+
+    for pattern in patterns:
+
+        match = re.match(pattern, question_lower, re.IGNORECASE)
+
+        if match:
+
+            country_name = match.group(1).strip()
+            country_name = country_name.rstrip("?.!")
+            country_name_sql = country_name.replace("'", "''")
+
+            sql = (
+                "SELECT COUNT(DISTINCT PlayerId) AS PlayerCount "
+                "FROM player "
+                f"WHERE LOWER(Country) = LOWER('{country_name_sql}') "
+                "AND FullName IS NOT NULL "
+                "AND TRIM(FullName) <> '';"
+            )
+
+            print("\n========== DIRECT PLAYER COUNTRY COUNT RULE ==========\n")
+            print(f"Detected country: {country_name}")
+            print(f"Generated SQL: {sql}")
+            print("\n=======================================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT PLAYER PROFILE
+# ============================================================
+
+def generate_direct_player_profile_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        (r"what is (.+?)'?s batting style\??$", "BattingStyle"),
+        (r"what is (.+?)'?s bowling style\??$", "BowlingStyle"),
+        (r"what is (.+?)'?s playing role\??$", "PlayingRole"),
+        (r"which country is (.+?) from\??$", "Country"),
+        (r"what country is (.+?) from\??$", "Country"),
+        (r"which city is (.+?) from\??$", "City"),
+        (r"what city is (.+?) from\??$", "City"),
+        (r"who is (.+?)\??$", "*"),
+        (r"tell me about (.+?)\??$", "*"),
+        (r"player profile of (.+?)\??$", "*"),
+    ]
+
+    for pattern, column in patterns:
+
+        match = re.match(pattern, question_lower, re.IGNORECASE)
+
+        if match:
+
+            player_name = match.group(1).strip()
+            player_name = player_name.rstrip("?.!")
+            player_name_sql = player_name.replace("'", "''")
+
+            if column == "*":
+
+                sql = (
+                    "SELECT * "
+                    "FROM player "
+                    f"WHERE LOWER(FullName) = LOWER('{player_name_sql}') "
+                    "LIMIT 1;"
+                )
+
+            else:
+
+                sql = (
+                    f"SELECT {column} "
+                    "FROM player "
+                    f"WHERE LOWER(FullName) = LOWER('{player_name_sql}') "
+                    "LIMIT 1;"
+                )
+
+            print("\n========== DIRECT PLAYER PROFILE RULE ==========\n")
+            print(f"Detected player: {player_name}")
+            print(f"Requested field: {column}")
+            print(f"Generated SQL: {sql}")
+            print("\n================================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT PLAYER STATISTICS
+# ============================================================
+
+def generate_direct_player_seasons_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        r"what are (.+?)'?s batting seasons\??$",
+        r"show batting seasons of (.+?)\??$",
+        r"list batting seasons of (.+?)\??$",
+        r"batting seasons of (.+?)\??$",
+    ]
+
+    for pattern in patterns:
+
+        match = re.match(pattern, question_lower, re.IGNORECASE)
+
+        if match:
+
+            player_name = match.group(1).strip()
+            player_name = player_name.rstrip("?.!")
+            player_name_sql = player_name.replace("'", "''")
+
+            sql = (
+                "SELECT DISTINCT bs.Season "
+                "FROM batting_stats bs "
+                "JOIN player p "
+                "ON bs.PlayerId = p.PlayerId "
+                f"WHERE LOWER(p.FullName) = LOWER('{player_name_sql}') "
+                "ORDER BY bs.Season;"
+            )
+
+            print("\n========== DIRECT PLAYER SEASONS RULE ==========\n")
+            print(f"Detected player: {player_name}")
+            print(sql)
+            print("\n===============================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT MOST RUNS
+# ============================================================
+
+def generate_direct_most_runs_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        r"who scored the most runs\??$",
+        r"which player scored the most runs\??$",
+        r"who has scored the most runs\??$",
+        r"who has the most runs\??$",
+        r"which player has the most runs\??$",
+    ]
+
+    for pattern in patterns:
+
+        if re.match(pattern, question_lower, re.IGNORECASE):
+
+            sql = (
+                "SELECT BatsmanName, "
+                "SUM(Runs) AS TotalRuns "
+                "FROM batting_detail "
+                "WHERE BatsmanName IS NOT NULL "
+                "AND TRIM(BatsmanName) <> '' "
+                "GROUP BY BatsmanName "
+                "ORDER BY TotalRuns DESC "
+                "LIMIT 1;"
+            )
+
+            print("\n========== DIRECT MOST RUNS RULE ==========\n")
+            print(f"Generated SQL: {sql}")
+            print("\n============================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT MOST MATCH WINS
+# ============================================================
+
+def generate_direct_most_wins_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        r"which team won the most matches\??$",
+        r"which team has won the most matches\??$",
+        r"who won the most matches\??$",
+        r"which team has the most wins\??$",
+        r"who has the most wins\??$",
+    ]
+
+    for pattern in patterns:
+
+        if re.match(pattern, question_lower, re.IGNORECASE):
+
+            sql = (
+                "SELECT WinnerName, "
+                "COUNT(*) AS MatchWins "
+                "FROM matches "
+                "WHERE WinnerName IS NOT NULL "
+                "AND TRIM(WinnerName) <> '' "
+                "AND LOWER(WinnerName) <> 'none' "
+                "AND LOWER(WinnerName) <> 'match cancelled' "
+                "GROUP BY WinnerName "
+                "ORDER BY MatchWins DESC "
+                "LIMIT 1;"
+            )
+
+            print("\n========== DIRECT MOST WINS RULE ==========\n")
+            print(f"Generated SQL: {sql}")
+            print("\n============================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# DIRECT TOURNAMENT START DATE
+#
+# Handles:
+# - Which tournament started on 2016-02-04?
+# - What tournament started on 2016-02-04?
+# - Which tournament began on 2016-02-04?
+# - What tournament began on 2016-02-04?
+# ============================================================
+
+def generate_direct_tournament_start_sql(question):
+
+    question_lower = question.lower().strip()
+
+    patterns = [
+        r"which tournament started on (\d{4}-\d{2}-\d{2})\??$",
+        r"what tournament started on (\d{4}-\d{2}-\d{2})\??$",
+        r"which tournament began on (\d{4}-\d{2}-\d{2})\??$",
+        r"what tournament began on (\d{4}-\d{2}-\d{2})\??$",
+    ]
+
+    for pattern in patterns:
+
+        match = re.match(pattern, question_lower, re.IGNORECASE)
+
+        if match:
+
+            start_date = match.group(1)
+
+            sql = (
+                "SELECT Name "
+                "FROM tournament "
+                f"WHERE DATE(StartDate) = '{start_date}' "
+                "ORDER BY Name;"
+            )
+
+            print("\n========== DIRECT TOURNAMENT START DATE RULE ==========\n")
+            print(f"Detected start date: {start_date}")
+            print(f"Generated SQL: {sql}")
+            print("\n========================================================\n")
+
+            return sql
+
+    return None
+
+
+# ============================================================
+# CLEAN LLM SQL OUTPUT
+# ============================================================
+
+def clean_sql_output(sql):
+
+    if not sql:
+        return ""
+
+    sql = sql.strip()
+
+    # Remove markdown code fences
+    sql = re.sub(r"```sql", "", sql, flags=re.IGNORECASE)
+    sql = re.sub(r"```", "", sql)
+    sql = sql.strip()
+
+    # If LLM added explanation before SQL,
+    # keep only from SELECT or WITH onward.
+    select_match = re.search(r"\b(SELECT|WITH)\b", sql, re.IGNORECASE)
+
+    if select_match:
+        sql = sql[select_match.start():]
+
+    # Keep only first SQL statement
+    if ";" in sql:
+        sql = sql.split(";")[0] + ";"
+
+    # Ensure semicolon
+    if not sql.endswith(";"):
+        sql += ";"
+
+    return sql.strip()
+
+
+# ============================================================
+# VALIDATE TABLES IN GENERATED SQL
+# ============================================================
+
+def validate_sql_tables(sql):
+
+    table_matches = re.findall(
+        r"\b(?:FROM|JOIN)\s+[`]?([A-Za-z0-9_]+)[`]?",
+        sql,
+        re.IGNORECASE
+    )
+
+    for table in table_matches:
+
+        valid = any(
+            table.lower() == known.lower()
+            for known in KNOWN_TABLES
+        )
+
+        if not valid:
+            print(
+                f"WARNING: Generated SQL contains unknown table: {table}"
+            )
+            return False
+
+    return True
+
+
+# ============================================================
+# MAIN SQL GENERATOR
+# ============================================================
+
+def generate_sql(question):
+
+    print("Question received:", repr(question))
+
+    # ========================================================
+    # STEP 1: DIRECT PLAYER STATISTICS
+    # ========================================================
+
+    direct_sql = generate_direct_player_stat_sql(question)
+
+    if direct_sql:
+        print("Using deterministic player-stat SQL.")
+        return direct_sql
+
+    # ========================================================
+    # STEP 2: DIRECT PLAYER LIST
+    # ========================================================
+
+    direct_player_list_sql = generate_direct_player_list_sql(question)
+
+    if direct_player_list_sql:
+        print("Using deterministic player-list SQL.")
+        return direct_player_list_sql
+
+    # ========================================================
+    # STEP 3: DIRECT PLAYER COUNT BY COUNTRY
+    # ========================================================
+
+    direct_country_count_sql = generate_direct_player_country_count_sql(
+        question
+    )
+
+    if direct_country_count_sql:
+        print("Using deterministic player-country-count SQL.")
+        return direct_country_count_sql
+
+    # ========================================================
+    # STEP 4: DIRECT PLAYER PROFILE
+    # ========================================================
+
+    direct_player_profile_sql = generate_direct_player_profile_sql(question)
+
+    if direct_player_profile_sql:
+        print("Using deterministic player-profile SQL.")
+        return direct_player_profile_sql
+
+    # ========================================================
+    # STEP 5: DIRECT PLAYER SEASONS
+    # ========================================================
+
+    direct_player_seasons_sql = generate_direct_player_seasons_sql(question)
+
+    if direct_player_seasons_sql:
+        print("Using deterministic player-seasons SQL.")
+        return direct_player_seasons_sql
+
+    # ========================================================
+    # STEP 6: DIRECT MOST RUNS
+    # ========================================================
+
+    direct_most_runs_sql = generate_direct_most_runs_sql(question)
+
+    if direct_most_runs_sql:
+        print("Using deterministic most-runs SQL.")
+        return direct_most_runs_sql
+
+    # ========================================================
+    # STEP 7: DIRECT MOST MATCH WINS
+    # ========================================================
+
+    direct_most_wins_sql = generate_direct_most_wins_sql(question)
+
+    if direct_most_wins_sql:
+        print("Using deterministic most-wins SQL.")
+        return direct_most_wins_sql
+
+    # ========================================================
+    # STEP 8: DIRECT TOURNAMENT START DATE
+    # ========================================================
+
+    direct_tournament_start_sql = generate_direct_tournament_start_sql(
+        question
+    )
+
+    if direct_tournament_start_sql:
+        print("Using deterministic tournament-start-date SQL.")
+        return direct_tournament_start_sql
+
+    # ========================================================
+    # STEP 9: RAG RETRIEVAL
+    # ========================================================
+
+    print("1. Retrieving schema...")
+
+    start_time = time.time()
+    schema = retrieve_schema(question)
+    retrieval_time = time.time() - start_time
+
+    print(f"RAG retrieval time: {retrieval_time:.2f} seconds")
+    print(f"Schema length: {len(schema)}")
+
+    # ========================================================
+    # STEP 10: SHOW SCHEMA PREVIEW
+    # ========================================================
+
+    print("\n========== FIRST 1000 CHARACTERS OF SCHEMA ==========\n")
+    print(schema[:1000])
+    print("\n=====================================================\n")
+
+    # ========================================================
+    # STEP 11: BUILD PROMPT
+    # ========================================================
+
+    prompt = f"""
+{SYSTEM_PROMPT}
+
+{schema}
+
+{question}
+
+Generate exactly ONE valid MariaDB SQL query.
+Use ONLY tables and columns that actually exist
+in the DATABASE SCHEMA above.
+
+Do NOT invent table names.
+
+Generate exactly ONE valid MariaDB SQL query.
+
+Read the CREATE TABLE statements carefully.
+
+Use ONLY the tables and columns that appear in the DATABASE SCHEMA.
+
+Rules:
+
+1. Never invent table names.
+
+2. Never invent column names.
+
+3. Use the EXACT column names from CREATE TABLE.
+
+4. If a table contains:
+
+Name
+
+then use:
+
+Name
+
+NOT:
+
+TournamentName
+ClubName
+PlayerName
+TeamName
+MatchName
+
+unless those columns actually exist.
+
+5. If you are unsure about a column name,
+   choose the closest existing column from the schema.
+
+6. Do not create aliases like T1 unless they are actually needed.
+
+Return ONLY the SQL query.
+
+Do not return explanations.
+
+Do not return markdown.
+
+Do not return code fences.
+
+The query must end with a semicolon.
+"""
+
+    print("3. Prompt ready")
+    print(f"Prompt length: {len(prompt)}")
+
+    # ========================================================
+    # STEP 12: CALL LLM
+    # ========================================================
+
+    print("4. Before LLM")
+
+    start_time = time.time()
+    response = llm.invoke(prompt)
+    llm_time = time.time() - start_time
+
+    print("5. After LLM")
+    print(f"LLM SQL generation time: {llm_time:.2f} seconds")
+
+    # ========================================================
+    # STEP 13: CLEAN OUTPUT
+    # ========================================================
+
+    sql = clean_sql_output(response)
+
+    # ========================================================
+    # STEP 14: VALIDATE TABLES
+    # ========================================================
+
+    if not validate_sql_tables(sql):
+
+        print("WARNING: Invalid table detected. Retrying...")
+
+        retry_prompt = f"""
+The previous SQL used a table that does not exist.
+
+Question:
+{question}
+
+Database Schema:
+{schema}
+
+Previous SQL:
+{sql}
+
+Generate a NEW MariaDB SQL query.
+
+Rules:
+
+- Use ONLY tables that exist in the schema.
+- Use ONLY columns that exist.
+- Return ONLY SQL.
+- End with a semicolon.
+"""
+
+        start_time = time.time()
+        response = llm.invoke(retry_prompt)
+        llm_time = time.time() - start_time
+
+        print(f"Retry LLM time: {llm_time:.2f} seconds")
+
+        sql = clean_sql_output(response)
+
+    # ========================================================
+    # STEP 15: RETURN SQL
+    # ========================================================
+
+    return sql
