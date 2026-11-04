@@ -1,0 +1,21 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - gallery.GalleryId → Gallery.GalleryId (guessed)
+  - gallery.GalleryId → Gallery.GalleryId (guessed)
+*/
+
+
+CREATE TABLE gallery (
+	`GalleryId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`GalleryName` VARCHAR(45), 
+	`CoverPhoto` VARCHAR(45), 
+	`DispOrder` INTEGER(11), 
+	PRIMARY KEY (`GalleryId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci COMMENT='	'
+
+/*
+3 rows from gallery table:
+GalleryId	GalleryName	CoverPhoto	DispOrder
+2	Players	players/noimg.jpg	2
+3	Misc	gallery/pindistadium4.jpg	3
+4	PCB	logos/PCB.jpg	4
+*/

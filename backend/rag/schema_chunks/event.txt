@@ -1,0 +1,30 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - event.EventId → Event.EventId (guessed)
+  - event.AssociationId → Association.AssociationId (guessed)
+  - event.HeldBy → users.UserId (guessed)
+  - event.EventId → Event.EventId (guessed)
+  - event.AssociationId → Association.AssociationId (guessed)
+  - event.AssociationId → Association.AssociationId (guessed)
+*/
+
+
+CREATE TABLE event (
+	`EventId` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`Name` VARCHAR(45) NOT NULL, 
+	`Type` VARCHAR(45) NOT NULL, 
+	`StartDate` DATETIME NOT NULL, 
+	`Detail` VARCHAR(100), 
+	`AssociationId` INTEGER(10) UNSIGNED, 
+	`Valid` TINYINT(1) NOT NULL, 
+	`HeldBy` VARCHAR(40), 
+	`Status` CHAR(1) NOT NULL DEFAULT 'A', 
+	`EndDate` DATETIME, 
+	PRIMARY KEY (`EventId`), 
+	CONSTRAINT `FK_event_association` FOREIGN KEY(`AssociationId`) REFERENCES association (`AssociationId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from event table:
+EventId	Name	Type	StartDate	Detail	AssociationId	Valid	HeldBy	Status	EndDate
+
+*/

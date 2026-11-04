@@ -1,0 +1,32 @@
+
+CREATE TABLE team (
+	`TeamId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`TeamName` VARCHAR(50), 
+	`Level` VARCHAR(30), 
+	`TournamentId` INTEGER(11), 
+	`DistrictId` INTEGER(11), 
+	`RegionId` INTEGER(11), 
+	`DepartmentId` INTEGER(11), 
+	`Valid` INTEGER(11), 
+	`Format` VARCHAR(20), 
+	`Coach` VARCHAR(30), 
+	`Manager` VARCHAR(255), 
+	`Captain` INTEGER(11), 
+	`Season` VARCHAR(7), 
+	`Logo` TINYINT(1) NOT NULL DEFAULT 0, 
+	`ProvinceId` INTEGER(11), 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	`Stage` VARCHAR(15), 
+	`ParentId` INTEGER(11) NOT NULL DEFAULT 0, 
+	`EditionId` INTEGER(11), 
+	`LastUpdated` TIMESTAMP NULL DEFAULT (current_timestamp()), 
+	PRIMARY KEY (`TeamId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from team table:
+TeamId	TeamName	Level	TournamentId	DistrictId	RegionId	DepartmentId	Valid	Format	Coach	Manager	Captain	Season	Logo	ProvinceId	ShortName	Stage	ParentId	EditionId	LastUpdated
+2	Attock District	District	9	4	14	0	None	Three Day			0	2013-14	1	0		None	0	None	2026-03-24 12:32:39
+3	Chakwal District	District	9	20	14	0	None	Three Day			0	2013-14	1	0		None	0	None	2026-03-24 12:32:39
+4	Mianwali District	District	9	21	14	0	None	Three Day			0	2013-14	1	0		None	0	None	2026-03-24 12:32:39
+*/

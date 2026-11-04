@@ -1,0 +1,27 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - match_comments.CommentId → Comment.CommentId (guessed)
+  - match_comments.Innings → innings.InningsId (guessed)
+  - match_comments.CommentId → Comment.CommentId (guessed)
+*/
+
+
+CREATE TABLE match_comments (
+	`CommentId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`MatchNo` INTEGER(11), 
+	`Innings` INTEGER(11), 
+	`Over` DOUBLE, 
+	`Sender` VARCHAR(30), 
+	`Comments` VARCHAR(300), 
+	`IsAdmin` INTEGER(1), 
+	`IsApproved` INTEGER(1), 
+	`Include` INTEGER(1) DEFAULT 0, 
+	PRIMARY KEY (`CommentId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from match_comments table:
+CommentId	MatchNo	Innings	Over	Sender	Comments	IsAdmin	IsApproved	Include
+1	959	1	0E-10		Match between AJK and Rawalpindi is yet to start, due to last night rain and ground conditions.	1	1	0
+2	959	1	40.0000000000		Congratulations !!!!! Shoaib Nasir got 100	1	1	0
+3	959	1	44.0000000000		Shoaib Nasir played a beautiful knock, at a good pace, making ammends for late start	1	1	0
+*/

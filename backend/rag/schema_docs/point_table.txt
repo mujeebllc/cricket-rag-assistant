@@ -1,0 +1,31 @@
+
+CREATE TABLE point_table (
+	`TournamentId` INTEGER(11) NOT NULL, 
+	`Type` VARCHAR(1) NOT NULL, 
+	`Groupe` VARCHAR(30) NOT NULL, 
+	`Team` INTEGER(11) NOT NULL, 
+	`TeamName` VARCHAR(45) NOT NULL, 
+	`Played` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Won` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Lost` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Draw` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Tie` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Abondoned` INTEGER(11) NOT NULL DEFAULT 0, 
+	`WicketsLost` INTEGER(11) NOT NULL DEFAULT 0, 
+	`WicketsTaken` INTEGER(11) NOT NULL DEFAULT 0, 
+	`RunsFor` INTEGER(11) NOT NULL DEFAULT 0, 
+	`RunsAgainst` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Points` INTEGER(11) NOT NULL DEFAULT 0, 
+	`BonusPoints` INTEGER(11) NOT NULL DEFAULT 0, 
+	`RunRate` DOUBLE NOT NULL DEFAULT 0, 
+	`NetRunRate` DOUBLE NOT NULL DEFAULT 0, 
+	PRIMARY KEY (`TournamentId`, `Groupe`, `Team`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from point_table table:
+TournamentId	Type	Groupe	Team	TeamName	Played	Won	Lost	Draw	Tie	Abondoned	WicketsLost	WicketsTaken	RunsFor	RunsAgainst	Points	BonusPoints	RunRate	NetRunRate
+42		Group A	1220		1	1	1	1	0	0	0	0	0	0	5	0	0E-10	0E-10
+42		Group B	1170		2	4	3	1	0	0	0	0	0	0	12	0	0E-10	0E-10
+49		Pool	215		7	5	2	0	0	0	0	0	0	0	10	0	0E-10	0E-10
+*/

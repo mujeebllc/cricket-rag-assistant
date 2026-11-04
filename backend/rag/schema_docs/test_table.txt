@@ -1,0 +1,17 @@
+
+CREATE TABLE test_table (
+	id INTEGER(11), 
+	title VARCHAR(100) CHARACTER SET latin1 COLLATE latin1_swedish_ci, 
+	heading VARCHAR(400) CHARACTER SET latin1 COLLATE latin1_swedish_ci, 
+	content TEXT CHARACTER SET latin1 COLLATE latin1_swedish_ci, 
+	caption VARCHAR(200) CHARACTER SET latin1 COLLATE latin1_swedish_ci
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_general_ci
+
+/*
+3 rows from test_table table:
+id	title	heading	content	caption
+1	Introduction	Introduction to Club Info	<p>While not being the national game of state, Cricket leaves behind any other sport popular in nati	ClubInfo
+2	Sri Lanka v Pakistan, 2nd Test, SSC	A Test of positives for Pakistan	<p>Moral victories are never mentioned in a scorecard. Nor can they be measured. In the second Test 	Junaid Khan set a great spell
+3	U-16, Friendly T20 Match	Roots Cricket Club VS Bajwa Cricket Club, Pindi Club, Rawalpindi	<p>
+                                <i> <b>Roots Club</b> got an easy victory over <b>Bajwa Cricket 	Roots beats Bajwa
+*/

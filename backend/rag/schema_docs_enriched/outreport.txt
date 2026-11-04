@@ -1,0 +1,16 @@
+
+CREATE TABLE outreport (
+	`ReportId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ReportName` VARCHAR(200), 
+	`Valid` TINYINT(1) DEFAULT 1, 
+	`FileNameFilter` VARCHAR(200), 
+	PRIMARY KEY (`ReportId`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from outreport table:
+ReportId	ReportName	Valid	FileNameFilter
+1	EBR	1	None
+38	TEST	1	TEST
+39	TEST 01	1	TEST 1
+*/

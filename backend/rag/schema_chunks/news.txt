@@ -1,0 +1,24 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - news.NewsId → News.NewsId (guessed)
+  - news.NewsId → News.NewsId (guessed)
+*/
+
+
+CREATE TABLE news (
+	`NewsId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`RefId` INTEGER(11), 
+	`Dated` DATETIME, 
+	`Type` VARCHAR(1) DEFAULT 'C', 
+	`Urdu` TINYINT(1), 
+	`NewsText` VARCHAR(500), 
+	PRIMARY KEY (`NewsId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from news table:
+NewsId	RefId	Dated	Type	Urdu	NewsText
+1	89	2014-09-08 10:00:00	C	0	Dear Members, As you all know that we have planned Bails annual general meeting a month ago and you 
+2	89	2014-09-14 10:00:00	C	0	Dear Bailsians,
+thanks for all those who showed up for the meeting. Indeed it was very fruitful dics
+4	279	2014-09-22 10:00:00	C	0	we are starting their season in CARRIAGE FACTORY GROUND on every Saturday ! Ground is Fully grassy &
+*/

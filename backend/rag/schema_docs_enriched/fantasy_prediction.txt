@@ -1,0 +1,22 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - fantasy_prediction.TournamentId → Tournament.TournamentId (guessed)
+*/
+
+
+CREATE TABLE fantasy_prediction (
+	`ID` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`TournamentId` INTEGER(11) NOT NULL, 
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`FUserId` INTEGER(11) NOT NULL, 
+	`Prediction` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Result` INTEGER(11) NOT NULL DEFAULT 0, 
+	PRIMARY KEY (`ID`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from fantasy_prediction table:
+ID	TournamentId	MatchNo	FUserId	Prediction	Result
+11	51	4890	13	244	145
+12	51	4890	38	244	151
+13	51	4890	20	243	136
+*/

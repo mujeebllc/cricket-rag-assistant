@@ -1,0 +1,51 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - tournament.TournamentId → Tournament.TournamentId (guessed)
+  - tournament.AssociationId → Association.AssociationId (guessed)
+  - tournament.HeldBy → users.UserId (guessed)
+  - tournament.Season → season.SeasonId (guessed)
+  - tournament.OrganizedBy → users.UserId (guessed)
+  - tournament.City → city.CityId (guessed)
+  - tournament.TournamentId → Tournament.TournamentId (guessed)
+*/
+
+
+CREATE TABLE tournament (
+	`TournamentId` INTEGER(11) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`Name` VARCHAR(80) NOT NULL DEFAULT ' ', 
+	`Format` VARCHAR(45) NOT NULL DEFAULT ' ', 
+	`StartDate` DATETIME, 
+	`Detail` VARCHAR(100) DEFAULT ' ', 
+	`AssociationId` INTEGER(10) UNSIGNED, 
+	`Valid` TINYINT(1) NOT NULL DEFAULT 1, 
+	`Winner` INTEGER(10) UNSIGNED, 
+	`RunnerUp` INTEGER(10) UNSIGNED, 
+	`HeldBy` VARCHAR(40) DEFAULT ' ', 
+	`Status` CHAR(1) NOT NULL DEFAULT 'A', 
+	`EndDate` DATETIME, 
+	`Season` VARCHAR(10) NOT NULL, 
+	`Level` VARCHAR(10) NOT NULL, 
+	`Type` VARCHAR(1) NOT NULL, 
+	`WinPoint` INTEGER(11) NOT NULL, 
+	`DrawPoint` INTEGER(11) NOT NULL, 
+	`PredictionStart` INTEGER(11) NOT NULL DEFAULT 0, 
+	`AutoCalculate` INTEGER(1) NOT NULL DEFAULT 1, 
+	`UserPassword` VARCHAR(20) NOT NULL, 
+	`Live` TINYINT(1) NOT NULL DEFAULT 0, 
+	`OrganizerType` VARCHAR(8) NOT NULL, 
+	`OrganizedBy` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Stage` VARCHAR(15) NOT NULL, 
+	`CountryName` VARCHAR(45), 
+	`CountryCode` INTEGER(11), 
+	`City` INTEGER(11), 
+	`CityName` VARCHAR(50), 
+	`LastUpdated` TIMESTAMP NULL DEFAULT (current_timestamp()), 
+	PRIMARY KEY (`TournamentId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from tournament table:
+TournamentId	Name	Format	StartDate	Detail	AssociationId	Valid	Winner	RunnerUp	HeldBy	Status	EndDate	Season	Level	Type	WinPoint	DrawPoint	PredictionStart	AutoCalculate	UserPassword	Live	OrganizerType	OrganizedBy	Stage	CountryName	CountryCode	City	CityName	LastUpdated
+3	NBP ICA Super League	One Day	2013-03-01 00:00:00	 	2	1	None	None	 ICA	F	None	2012-13		C	0	0	0	1		0		0		Pakistan	92	None	None	2026-03-24 06:47:03
+4	UET T20 INTERVARSITY CRICKET LEAGUE 2013	 T20	2013-05-01 00:00:00	 	15	1	331	335	 	F	2013-05-19 00:00:00	2012-13		C	0	0	0	1		0		0		Pakistan	92	None	None	2026-03-24 06:47:03
+5	Rawalpindi Region U-16 Talent Hunt Tournament	 One Day	2013-05-16 00:00:00	 	1	1	None	None	 	F	2013-05-30 00:00:00	2012-13	U-16	C	0	0	0	1		0		0		Pakistan	92	None	None	2026-03-24 06:47:03
+*/

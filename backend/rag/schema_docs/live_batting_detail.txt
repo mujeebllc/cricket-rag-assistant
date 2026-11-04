@@ -1,0 +1,35 @@
+
+CREATE TABLE live_batting_detail (
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`Innings` INTEGER(11) NOT NULL, 
+	`PlayerId` INTEGER(11) NOT NULL, 
+	`Runs` INTEGER(11) DEFAULT 0, 
+	`BallsFaced` INTEGER(11) DEFAULT 0, 
+	`Fours` INTEGER(11) DEFAULT 0, 
+	`Sixes` INTEGER(11) DEFAULT 0, 
+	`Singles` INTEGER(11) DEFAULT 0, 
+	`Doubles` INTEGER(11) DEFAULT 0, 
+	`Threes` INTEGER(11) DEFAULT 0, 
+	`Dots` INTEGER(11) DEFAULT 0, 
+	`NotOut` TINYINT(1), 
+	`HowOut` VARCHAR(20), 
+	`OutDetail` VARCHAR(50), 
+	`Bowler` INTEGER(11), 
+	`Fielder` INTEGER(11), 
+	`Position` INTEGER(11) DEFAULT 0, 
+	`UpdateBy` INTEGER(11) NOT NULL, 
+	`LastUpdated` DATETIME NOT NULL, 
+	`BatsmanName` VARCHAR(100), 
+	`FielderName` VARCHAR(100), 
+	`BowlerName` VARCHAR(100), 
+	`TeamId` INTEGER(11), 
+	`TeamName` VARCHAR(100), 
+	`MatchType` VARCHAR(1), 
+	PRIMARY KEY (`MatchNo`, `Innings`, `PlayerId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from live_batting_detail table:
+MatchNo	Innings	PlayerId	Runs	BallsFaced	Fours	Sixes	Singles	Doubles	Threes	Dots	NotOut	HowOut	OutDetail	Bowler	Fielder	Position	UpdateBy	LastUpdated	BatsmanName	FielderName	BowlerName	TeamId	TeamName	MatchType
+
+*/

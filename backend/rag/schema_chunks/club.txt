@@ -1,0 +1,54 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - club.ClubId → Club.ClubId (guessed)
+  - club.AssociationId → Association.AssociationId (guessed)
+  - club.ClubId → Club.ClubId (guessed)
+  - club.AssociationId → Association.AssociationId (guessed)
+  - club.AssociationId → Association.AssociationId (guessed)
+*/
+
+
+CREATE TABLE club (
+	`ClubId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ClubName` VARCHAR(45) NOT NULL DEFAULT ' ', 
+	`President` VARCHAR(45) DEFAULT ' ', 
+	`Coach` VARCHAR(45) DEFAULT ' ', 
+	`Address` VARCHAR(100) DEFAULT ' ', 
+	`Description` VARCHAR(500) DEFAULT ' ', 
+	`AssociationId` INTEGER(10) UNSIGNED, 
+	`Valid` TINYINT(1) NOT NULL DEFAULT 1, 
+	`Location` VARCHAR(25) DEFAULT '33.594880, 73.051201', 
+	`Logo` TINYINT(1) DEFAULT 0, 
+	`ContactNo` VARCHAR(15) DEFAULT ' ', 
+	`Treasurer` VARCHAR(45) DEFAULT ' ', 
+	`Secretary` VARCHAR(45) DEFAULT ' ', 
+	`Registered` TINYINT(1) NOT NULL DEFAULT 1, 
+	`ClubPassword` VARCHAR(20) CHARACTER SET latin1 COLLATE latin1_bin, 
+	`Cover` TINYINT(4) NOT NULL, 
+	`Email` VARCHAR(60) NOT NULL, 
+	`Website` VARCHAR(60) NOT NULL, 
+	`FBPage` VARCHAR(60) NOT NULL, 
+	`Trusted` TINYINT(1) NOT NULL DEFAULT 0, 
+	`PresidentContact` VARCHAR(100), 
+	`PresidentPic` INTEGER(1) NOT NULL DEFAULT 0, 
+	`SecretaryContact` VARCHAR(100), 
+	`SecretaryPic` INTEGER(1) NOT NULL DEFAULT 0, 
+	`TreasurerContact` VARCHAR(100), 
+	`TreasurerPic` INTEGER(1) NOT NULL DEFAULT 0, 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	`Captain` INTEGER(11), 
+	`CCA` INTEGER(11), 
+	countryid INTEGER(11), 
+	cityid INTEGER(11), 
+	city VARCHAR(50), 
+	country VARCHAR(30), 
+	PRIMARY KEY (`ClubId`), 
+	CONSTRAINT `FK_club_association` FOREIGN KEY(`AssociationId`) REFERENCES association (`AssociationId`)
+)ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from club table:
+ClubId	ClubName	President	Coach	Address	Description	AssociationId	Valid	Location	Logo	ContactNo	Treasurer	Secretary	Registered	ClubPassword	Cover	Email	Website	FBPage	Trusted	PresidentContact	PresidentPic	SecretaryContact	SecretaryPic	TreasurerContact	TreasurerPic	ShortName	Captain	CCA	countryid	cityid	city	country
+3	Abbasi Pindi Cricket Club	Raja Sarfaraz Ahmed		Muslim School No.1, Saidpur Road, Rawalpindi		1	1	33.631263,73.064892	0	 	 	 	0		0				0	None	0	None	0	None	0	AP(Rwp)	0	None	92	1	Rawalpindi	Pakistan
+4	Abbasi Kahuta Cricket Club	Jamshed Abbasi		Govt. High School Kahuta		1	1	33.594523,73.382685	0	 	 	 	1		0			pages/Abbasi-Kahuta-Cricket-Club/713451678698324	0	None	0	None	0	None	0	AK(RWP)	0	None	92	1	Rawalpindi	Pakistan
+5	Al-Fatah Cricket Club	Mumhammad Arshad		23 Area wah		1	1	33.778189,72.740178	0	 	 	Ilyas	1		0				0	None	0	None	0	None	0	AF(RWP)	0	None	92	1	Rawalpindi	Pakistan
+*/

@@ -1,0 +1,18 @@
+
+CREATE TABLE offer (
+	`OfferId` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`ClubId` INTEGER(11) NOT NULL, 
+	`OfferDate` DATETIME NOT NULL, 
+	`Ground` VARCHAR(70) NOT NULL, 
+	`Remove` TINYINT(1) NOT NULL DEFAULT 0, 
+	PRIMARY KEY (`OfferId`), 
+	CONSTRAINT `FK_offer_Club` FOREIGN KEY(`ClubId`) REFERENCES club (`ClubId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from offer table:
+OfferId	ClubId	OfferDate	Ground	Remove
+8	89	2012-12-16 00:00:00		1
+9	89	2012-12-16 00:00:00	Looking for a match with a team having ground	0
+10	89	2013-01-27 00:00:00	Looking for a match with a team having a grou	1
+*/

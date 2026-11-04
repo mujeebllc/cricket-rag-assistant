@@ -1,0 +1,45 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - bowling_detail.Innings → innings.InningsId (guessed)
+  - bowling_detail.PlayerId → Player.PlayerId (guessed)
+  - bowling_detail.TeamId → Team.TeamId (guessed)
+  - bowling_detail.UpdateBy → users.UserId (guessed)
+  - bowling_detail.Innings → innings.InningsId (guessed)
+  - bowling_detail.PlayerId → Player.PlayerId (guessed)
+  - bowling_detail.Innings → innings.InningsId (guessed)
+  - bowling_detail.Innings → innings.InningsId (guessed)
+  - bowling_detail.PlayerId → Player.PlayerId (guessed)
+  - bowling_detail.PlayerId → Player.PlayerId (guessed)
+*/
+
+
+CREATE TABLE bowling_detail (
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`Innings` INTEGER(11) NOT NULL, 
+	`PlayerId` INTEGER(11) NOT NULL, 
+	`Overs` DOUBLE DEFAULT 0, 
+	`Maiden` INTEGER(11) DEFAULT 0, 
+	`Runs` INTEGER(11) DEFAULT 0, 
+	`Wickets` INTEGER(11) DEFAULT 0, 
+	`Wides` INTEGER(11) DEFAULT 0, 
+	`NoBalls` INTEGER(11) DEFAULT 0, 
+	`TeamId` INTEGER(11), 
+	`TeamName` VARCHAR(45) NOT NULL, 
+	`Position` INTEGER(11) DEFAULT 0, 
+	`Current` INTEGER(11) NOT NULL, 
+	`UpdateBy` INTEGER(11) NOT NULL, 
+	`LastUpdate` DATETIME NOT NULL, 
+	`BowlerName` VARCHAR(100), 
+	`MatchType` VARCHAR(1), 
+	`Balls` INTEGER(11), 
+	PRIMARY KEY (`MatchNo`, `Innings`, `PlayerId`), 
+	CONSTRAINT `FK_bowling_detail_innings` FOREIGN KEY(`MatchNo`, `Innings`) REFERENCES innings (`MatchNo`, `Innings`), 
+	CONSTRAINT `FK_bowling_detail_player` FOREIGN KEY(`PlayerId`) REFERENCES player (`PlayerId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from bowling_detail table:
+MatchNo	Innings	PlayerId	Overs	Maiden	Runs	Wickets	Wides	NoBalls	TeamId	TeamName	Position	Current	UpdateBy	LastUpdate	BowlerName	MatchType	Balls
+7	1	515	0E-10	0	0	3	0	0	36	Zahir Shah Cricket Academy & Club	1	0	0	0000-00-00 00:00:00	Naveed Abbasi	C	None
+7	1	516	0E-10	0	0	1	0	0	36	Zahir Shah Cricket Academy & Club	4	0	0	0000-00-00 00:00:00	Adnan Abbasi	C	None
+7	1	520	0E-10	0	0	1	0	0	36	Zahir Shah Cricket Academy & Club	3	0	0	0000-00-00 00:00:00	Rashid Munir	C	None
+*/

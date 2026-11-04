@@ -1,0 +1,21 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - department.DepartmentId → Department.DepartmentId (guessed)
+  - department.DepartmentId → Department.DepartmentId (guessed)
+*/
+
+
+CREATE TABLE department (
+	`DepartmentId` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`DepartmentName` VARCHAR(45) NOT NULL DEFAULT ' ', 
+	`Description` VARCHAR(200), 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	PRIMARY KEY (`DepartmentId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from department table:
+DepartmentId	DepartmentName	Description	ShortName
+1	 United Bank Limited	None	
+2	Port Qasim Authority		
+3	 Sui Northern Gas Pipelines Limited	None	
+*/

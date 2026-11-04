@@ -1,0 +1,13 @@
+
+CREATE TABLE `group` (
+	`GroupId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`GroupName` VARCHAR(100), 
+	`Valid` TINYINT(1) DEFAULT 1, 
+	PRIMARY KEY (`GroupId`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from group table:
+GroupId	GroupName	Valid
+
+*/

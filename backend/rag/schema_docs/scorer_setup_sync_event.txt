@@ -1,0 +1,18 @@
+
+CREATE TABLE scorer_setup_sync_event (
+	`ClientEventId` VARCHAR(191) NOT NULL, 
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`DeviceId` VARCHAR(191) NOT NULL, 
+	`EntityType` VARCHAR(50) NOT NULL, 
+	`OperationType` VARCHAR(50) NOT NULL, 
+	`CreatedAt` DATETIME NOT NULL DEFAULT (current_timestamp()), 
+	PRIMARY KEY (`ClientEventId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_uca1400_ai_ci
+
+/*
+3 rows from scorer_setup_sync_event table:
+ClientEventId	MatchNo	DeviceId	EntityType	OperationType	CreatedAt
+fow-9893-1777716007337195	9893	device-1777715390986902	FOW	UPSERT	2026-05-02 10:00:08
+fow-9893-1777717125159648	9893	device-1777715390986902	FOW	UPSERT	2026-05-02 10:18:46
+fow-9893-1777717173154944	9893	device-1777715390986902	FOW	UPSERT	2026-05-02 10:19:34
+*/

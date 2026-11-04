@@ -1,0 +1,15 @@
+
+CREATE TABLE inreport (
+	`ReportId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ReportName` VARCHAR(200), 
+	`Valid` TINYINT(1) DEFAULT 1, 
+	PRIMARY KEY (`ReportId`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from inreport table:
+ReportId	ReportName	Valid
+1	Flash Manager	1
+2	Trial Balance	1
+3	Daily Operations	1
+*/

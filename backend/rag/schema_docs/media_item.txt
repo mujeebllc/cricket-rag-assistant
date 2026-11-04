@@ -1,0 +1,19 @@
+
+CREATE TABLE media_item (
+	`ItemId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`Dated` DATETIME, 
+	`Heading` VARCHAR(100), 
+	src VARCHAR(50), 
+	`GroupId` INTEGER(11), 
+	`Height` INTEGER(11) NOT NULL, 
+	`Width` INTEGER(11) NOT NULL, 
+	PRIMARY KEY (`ItemId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from media_item table:
+ItemId	Dated	Heading	src	GroupId	Height	Width
+4	2014-01-30 00:00:00	Yasir Hameed wishes club info luck	9jWWo6mKunE	374	315	420
+5	2015-08-26 00:00:00	Sach Tv news package on our site www.clubinfo.com.pk	4h7ILmqh4XM	374	315	420
+6	2015-09-07 00:00:00	First Class Player Attaullah has message on Club Info	WQA_Fexy5uI	374	315	420
+*/

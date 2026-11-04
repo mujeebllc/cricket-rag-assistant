@@ -1,0 +1,15 @@
+
+CREATE TABLE screen (
+	`ScreenId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ScreenName` VARCHAR(50), 
+	`URL` VARCHAR(100), 
+	PRIMARY KEY (`ScreenId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_general_ci
+
+/*
+3 rows from screen table:
+ScreenId	ScreenName	URL
+1	Dashboard	/dashboard
+2	All Articles	/all-articles
+3	Article	/article
+*/

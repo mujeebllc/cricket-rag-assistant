@@ -1,0 +1,43 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - match_over.Innings → innings.InningsId (guessed)
+  - match_over.Innings → innings.InningsId (guessed)
+*/
+
+
+CREATE TABLE match_over (
+	`MatchNo` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Innings` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Over` DOUBLE NOT NULL DEFAULT 0, 
+	`Score` INTEGER(11) DEFAULT 0, 
+	`Wicket` INTEGER(11) DEFAULT 0, 
+	`Bowler` INTEGER(11) DEFAULT 0, 
+	`Striker` INTEGER(11) DEFAULT 0, 
+	`NonStriker` INTEGER(11) DEFAULT 0, 
+	`StrikerRuns` INTEGER(11) DEFAULT 0, 
+	`StrikerBalls` INTEGER(11) NOT NULL DEFAULT 0, 
+	`NonStrikerRuns` INTEGER(11) DEFAULT 0, 
+	`NonStrikerBalls` INTEGER(11) NOT NULL DEFAULT 0, 
+	`RunsInOver` INTEGER(11) DEFAULT 0, 
+	`WicketsInOver` INTEGER(11) DEFAULT 0, 
+	`Wides` INTEGER(11) DEFAULT 0, 
+	`NoBalls` INTEGER(11) DEFAULT 0, 
+	`Byes` INTEGER(11) DEFAULT 0, 
+	`LByes` INTEGER(11) DEFAULT 0, 
+	`EndOfOver` INTEGER(11) NOT NULL, 
+	`StrikerName` VARCHAR(100), 
+	`NonStrikerName` VARCHAR(100), 
+	`BowlerName` VARCHAR(100), 
+	`BowlerOver` DOUBLE, 
+	`Maiden` INTEGER(11), 
+	`BowlerRuns` INTEGER(11), 
+	`BowlerWicket` INTEGER(11), 
+	PRIMARY KEY (`MatchNo`, `Innings`, `Over`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from match_over table:
+MatchNo	Innings	Over	Score	Wicket	Bowler	Striker	NonStriker	StrikerRuns	StrikerBalls	NonStrikerRuns	NonStrikerBalls	RunsInOver	WicketsInOver	Wides	NoBalls	Byes	LByes	EndOfOver	StrikerName	NonStrikerName	BowlerName	BowlerOver	Maiden	BowlerRuns	BowlerWicket
+0	0	1.0000000000	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	None	None	None	None	None	None	None
+0	0	15.0000000000	0	0	0	8624	8629	18	15	0	2	0	0	0	0	0	0	0	Jahanzaib Islam	Inzamam Shafiq	None	None	None	None	None
+862	1	1.0000000000	0	0	1831	1736	259	0	0	0	0	0	0	0	0	0	0	1	Nouman Ali	Shahid Gill	Touseeq Shah	None	None	None	None
+*/

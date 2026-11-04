@@ -1,0 +1,25 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - section_head.SectionId → Section.SectionId (guessed)
+*/
+
+
+CREATE TABLE section_head (
+	`HeadId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`RowNo` INTEGER(11), 
+	`HeadName` VARCHAR(100), 
+	`ValueType` VARCHAR(20) DEFAULT 'Value', 
+	`ValueReport` VARCHAR(20) DEFAULT 'InReport', 
+	`CellValue` VARCHAR(80), 
+	`SectionId` INTEGER(11), 
+	`Valid` TINYINT(1) DEFAULT 1, 
+	`ReportId` INTEGER(11), 
+	PRIMARY KEY (`HeadId`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from section_head table:
+HeadId	RowNo	HeadName	ValueType	ValueReport	CellValue	SectionId	Valid	ReportId
+1	1	Occ%	VALUE	INREPORT	124	1	1	1
+2	2	ARR	VALUE	INREPORT	125	1	1	1
+4	3	REV PAR	FORMULA	INREPORT	126	1	1	None
+*/

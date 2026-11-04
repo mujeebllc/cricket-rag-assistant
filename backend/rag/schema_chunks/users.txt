@@ -1,0 +1,22 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - users.UserId → Users.UserId (guessed)
+  - users.GroupId → Group.GroupId (guessed)
+  - users.UserId → Users.UserId (guessed)
+*/
+
+
+CREATE TABLE users (
+	`UserId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`UserName` VARCHAR(20) NOT NULL, 
+	`UserPassword` TEXT NOT NULL, 
+	`GroupId` INTEGER(11) NOT NULL, 
+	PRIMARY KEY (`UserId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from users table:
+UserId	UserName	UserPassword	GroupId
+1	ishtiaq	ishtiaq111	1
+2	mahpara	para911	2
+19	musab	musab123	3
+*/

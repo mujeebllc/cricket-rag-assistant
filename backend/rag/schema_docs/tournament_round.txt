@@ -1,0 +1,15 @@
+
+CREATE TABLE tournament_round (
+	`RoundId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`RoundName` VARCHAR(20) NOT NULL, 
+	`TournamentId` INTEGER(11) UNSIGNED NOT NULL, 
+	PRIMARY KEY (`RoundId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from tournament_round table:
+RoundId	RoundName	TournamentId
+1	League	160
+2	Final	160
+4	Pool 1	159
+*/

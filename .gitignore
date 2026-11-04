@@ -1,0 +1,39 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment Variables & Secrets
+.env
+.env.local
+*.env
+
+# Server Logs & Test Outputs
+*.log
+backend/server.log
+backend/test_out.txt
+backend/overall_test_out.txt
+
+# Backup & Temporary Files
+*.bak
+*.backup*
+*.bak_*
+*.save*
+*.broken
+backend/cricket_project_debug.tar.gz
+
+# IDE & Editor Specific
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+

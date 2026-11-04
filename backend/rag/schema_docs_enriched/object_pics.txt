@@ -1,0 +1,17 @@
+
+CREATE TABLE object_pics (
+	`ID` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ObjectType` VARCHAR(30) NOT NULL, 
+	`ObjectId` INTEGER(11) NOT NULL, 
+	`Caption` VARCHAR(80) NOT NULL, 
+	`ImagePath` VARCHAR(50) NOT NULL, 
+	PRIMARY KEY (`ID`)
+)DEFAULT CHARSET=latin1 ENGINE=MyISAM COLLATE latin1_swedish_ci
+
+/*
+3 rows from object_pics table:
+ID	ObjectType	ObjectId	Caption	ImagePath
+2	Match	3758	test	test
+3	Article	993	aaa	aaaa
+13	Tournament	30	In Opening Match, Haji Tariq MoM for atheltic fielding and amazing batting	gallery/CIChampionship-MOM-Match1.jpg
+*/

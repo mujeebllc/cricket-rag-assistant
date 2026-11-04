@@ -1,0 +1,33 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - outreport_data.Budget → budget.BudgetId (guessed)
+  - outreport_data.SectionId → Section.SectionId (guessed)
+*/
+
+
+CREATE TABLE outreport_data (
+	`Id` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`RowNumber` INTEGER(11), 
+	`ReportDate` DATE, 
+	`HeadId` INTEGER(11), 
+	`HeadName` VARCHAR(80), 
+	`Actual` INTEGER(11), 
+	`Budget` INTEGER(11), 
+	`LY` INTEGER(11), 
+	`MTDActual` INTEGER(11), 
+	`MTDBudget` INTEGER(11), 
+	`MTDLY` INTEGER(11), 
+	`YTDActual` INTEGER(11), 
+	`YTDBudget` INTEGER(11), 
+	`YTDLY` INTEGER(11), 
+	`SectionName` VARCHAR(255), 
+	`SectionId` INTEGER(11), 
+	PRIMARY KEY (`Id`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from outreport_data table:
+Id	RowNumber	ReportDate	HeadId	HeadName	Actual	Budget	LY	MTDActual	MTDBudget	MTDLY	YTDActual	YTDBudget	YTDLY	SectionName	SectionId
+1	1	2024-10-24	1	Occ%	91	0	0	0	0	0	0	0	0	ROOM ANALYSIS	1
+2	2	2024-10-24	2	ARR	45242	0	0	0	0	0	0	0	0	ROOM ANALYSIS	1
+3	3	2024-10-24	126	REV PAR	286	629	0	0	0	0	0	0	0	ROOM ANALYSIS	1
+*/

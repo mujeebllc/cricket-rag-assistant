@@ -1,0 +1,35 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - temp.ArticleId → Article.ArticleId (guessed)
+  - temp.CreatedBy → users.UserId (guessed)
+  - temp.UpdatedBy → users.UserId (guessed)
+  - temp.ArticleId → Article.ArticleId (guessed)
+*/
+
+
+CREATE TABLE temp (
+	`ArticleId` INTEGER(11) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+	`Title` VARCHAR(100), 
+	`Heading` VARCHAR(400), 
+	`Writer` VARCHAR(50), 
+	`Dated` DATETIME, 
+	`Content` MEDIUMTEXT, 
+	`Image` VARCHAR(80), 
+	`Caption` LONGTEXT, 
+	`Status` TINYINT(1) DEFAULT 1, 
+	`OrderNo` INTEGER(11) NOT NULL, 
+	`Urdu` TINYINT(1) NOT NULL DEFAULT 0, 
+	`CreatedBy` INTEGER(11), 
+	`UpdatedBy` INTEGER(11), 
+	`CreatedAt` DATETIME, 
+	`UpdatedAt` DATETIME, 
+	PRIMARY KEY (`ArticleId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_general_ci
+
+/*
+3 rows from temp table:
+ArticleId	Title	Heading	Writer	Dated	Content	Image	Caption	Status	OrderNo	Urdu	CreatedBy	UpdatedBy	CreatedAt	UpdatedAt
+1	Introduction	Introduction to Club Info	Opening Statement	2012-07-12 00:00:00	<p>While not being the national game of state, Cricket leaves behind any other sport popular in nati	1-misbah-afg-head-coach-Untitled-3.jpg	ClubInfo	1	0	0	None	None	None	None
+2	Sri Lanka v Pakistan, 2nd Test, SSC	A Test of positives for Pakistan	Courtesy CricInfo	2012-07-04 00:00:00	<p>Moral victories are never mentioned in a scorecard. Nor can they be measured. In the second Test 	gallery/1470312.jpg	Junaid Khan set a great spell	1	0	0	None	None	None	None
+3	U-16, Friendly T20 Match	Roots Cricket Club VS Bajwa Cricket Club, Pindi Club, Rawalpindi	Vikky	2012-07-07 00:00:00	<p>
+                                <i> <b>Roots Club</b> got an easy victory over <b>Bajwa Cricket 	public/image/test/3-WhatsApp Image 2025-02-12 at 10.23.41 AM.jpeg	Roots beats Bajwa	1	0	0	None	None	None	None
+*/

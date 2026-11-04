@@ -1,0 +1,25 @@
+
+CREATE TABLE city_cricket_association (
+	`CCAId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`CCAName` VARCHAR(30) NOT NULL, 
+	`CAId` INTEGER(11) NOT NULL, 
+	`CityId` INTEGER(11) NOT NULL, 
+	`Address` VARCHAR(50), 
+	`Latitude` FLOAT, 
+	`Longitude` FLOAT, 
+	`Website` VARCHAR(30), 
+	`FBPage` VARCHAR(40), 
+	`Twitter` VARCHAR(30), 
+	`Email` VARCHAR(30), 
+	`Contact` VARCHAR(30), 
+	`Valid` TINYINT(4) NOT NULL DEFAULT 1, 
+	PRIMARY KEY (`CCAId`), 
+	CONSTRAINT fk_cca_ca FOREIGN KEY(`CCAId`) REFERENCES cricket_association (`CAId`), 
+	CONSTRAINT fk_cca_city FOREIGN KEY(`CityId`) REFERENCES city (`CityId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from city_cricket_association table:
+CCAId	CCAName	CAId	CityId	Address	Latitude	Longitude	Website	FBPage	Twitter	Email	Contact	Valid
+1	Rawalpindi City Association	1	1	aaa	0.0	0.0	aaa					1
+*/

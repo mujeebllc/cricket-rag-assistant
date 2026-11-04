@@ -1,0 +1,33 @@
+
+CREATE TABLE innings (
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`Innings` INTEGER(11) NOT NULL, 
+	`Score` INTEGER(11), 
+	`Overs` DOUBLE, 
+	`Byes` INTEGER(11), 
+	`LByes` INTEGER(11), 
+	`Wides` INTEGER(11), 
+	`NoBalls` INTEGER(11), 
+	`BattingTeam` INTEGER(11), 
+	`BowlingTeam` INTEGER(11), 
+	`Wickets` INTEGER(11) DEFAULT 0, 
+	`UpdateBy` INTEGER(11) NOT NULL, 
+	`UpdateTime` DATETIME NOT NULL, 
+	`BattingTeamName` VARCHAR(50), 
+	`BowlingTeamName` VARCHAR(50), 
+	`MatchType` VARCHAR(1) DEFAULT 'C', 
+	`CurrentStrikePlayerId` INTEGER(11), 
+	`ballsInCurrentOver` INTEGER(11), 
+	`CurrentNonStrikePlayerId` INTEGER(11), 
+	`CurrentBowlerPlayerId` INTEGER(11), 
+	PRIMARY KEY (`MatchNo`, `Innings`), 
+	CONSTRAINT `FK_innings_Match` FOREIGN KEY(`MatchNo`) REFERENCES matches (`MatchNo`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from innings table:
+MatchNo	Innings	Score	Overs	Byes	LByes	Wides	NoBalls	BattingTeam	BowlingTeam	Wickets	UpdateBy	UpdateTime	BattingTeamName	BowlingTeamName	MatchType	CurrentStrikePlayerId	ballsInCurrentOver	CurrentNonStrikePlayerId	CurrentBowlerPlayerId
+2	1	128	20.0000000000	0	0	0	0	40	32	10	0	0000-00-00 00:00:00	Layyah	Attock District	T	None	None	None	None
+2	2	128	17.0000000000	0	0	0	0	32	40	2	0	0000-00-00 00:00:00	Attock District	Layyah	T	None	None	None	None
+5	1	161	35.0000000000	0	0	0	0	62	32	10	0	0000-00-00 00:00:00	Pak Potohar XI	Pak Sports Cricket Club	C	None	None	None	None
+*/

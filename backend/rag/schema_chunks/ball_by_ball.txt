@@ -1,0 +1,41 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - ball_by_ball.Innings → innings.InningsId (guessed)
+  - ball_by_ball.Comment → comment.CommentId (guessed)
+*/
+
+
+CREATE TABLE ball_by_ball (
+	`BallId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`MatchNo` INTEGER(11), 
+	`Innings` INTEGER(11), 
+	`Over` INTEGER(11), 
+	`Ball` INTEGER(11), 
+	`BatsmanId` INTEGER(11), 
+	`BowlerId` INTEGER(11), 
+	`Runs` INTEGER(11) DEFAULT 0, 
+	`Strike` INTEGER(1) DEFAULT 1, 
+	`Wide` INTEGER(1) DEFAULT 0, 
+	`NoBall` INTEGER(1) DEFAULT 0, 
+	`LegByes` INTEGER(1) DEFAULT 0, 
+	`Byes` INTEGER(1) DEFAULT 0, 
+	`Wicket` INTEGER(1) DEFAULT 0, 
+	`Comment` VARCHAR(100), 
+	`BallPitch` VARCHAR(40), 
+	`ShotPosition` VARCHAR(10), 
+	`ShotArea` VARCHAR(50), 
+	`Inverse` INTEGER(1) DEFAULT 0, 
+	`FreeHit` INTEGER(11), 
+	`Penalty` INTEGER(11), 
+	`ShotType` INTEGER(11) NOT NULL DEFAULT 0, 
+	`BatsmanName` VARCHAR(100), 
+	`BowlerName` VARCHAR(100), 
+	PRIMARY KEY (`BallId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from ball_by_ball table:
+BallId	MatchNo	Innings	Over	Ball	BatsmanId	BowlerId	Runs	Strike	Wide	NoBall	LegByes	Byes	Wicket	Comment	BallPitch	ShotPosition	ShotArea	Inverse	FreeHit	Penalty	ShotType	BatsmanName	BowlerName
+20	1683	2	0	1	2692	2699	0	1	0	0	0	0	0	None	None	None	None	1	0	0	0	Sara	Madiha Rasheed
+21	1683	2	0	2	2692	2699	0	1	0	0	0	0	0	None	None	None	None	1	0	0	0	Sara	Madiha Rasheed
+22	1683	2	0	3	2692	2699	0	1	0	0	0	0	1	None	None	None	None	1	0	0	0	Sara	Madiha Rasheed
+*/

@@ -1,0 +1,21 @@
+
+CREATE TABLE comment (
+	`CommentId` INTEGER(11) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`ArticleId` INTEGER(11) UNSIGNED ZEROFILL NOT NULL, 
+	`CommentBy` VARCHAR(45) NOT NULL, 
+	`CommentDate` DATETIME NOT NULL, 
+	`Msg` VARCHAR(1500) NOT NULL, 
+	`Visible` TINYINT(1) NOT NULL DEFAULT 1, 
+	email VARCHAR(45), 
+	PRIMARY KEY (`CommentId`), 
+	CONSTRAINT `FK_comment_article` FOREIGN KEY(`ArticleId`) REFERENCES article (`ArticleId`)
+)ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from comment table:
+CommentId	ArticleId	CommentBy	CommentDate	Msg	Visible	email
+34	30	israr  raja	2012-09-19 01:47:48	WEST INDIES  VS   KIWI BOYS / WEST INDIES WIN BY 5 WICKET 	1	None
+35	33	Qurtaba	2012-09-24 13:05:03	RDCA is a mother fucker organization all club presidents aslo 	1	None
+36	35	raja israr 	2012-09-27 05:26:42	  M SALEEM    BAST COACH RAWALPINDI
+ 	1	None
+*/

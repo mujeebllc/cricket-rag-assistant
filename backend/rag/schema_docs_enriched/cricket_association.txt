@@ -1,0 +1,24 @@
+
+CREATE TABLE cricket_association (
+	`CAId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`CAName` VARCHAR(30) NOT NULL, 
+	`Address` VARCHAR(50), 
+	`Latitude` FLOAT, 
+	`Longitude` FLOAT, 
+	`Website` VARCHAR(30), 
+	`FBPage` VARCHAR(40), 
+	`Twitter` VARCHAR(30), 
+	`Email` VARCHAR(30), 
+	`Contact` VARCHAR(30), 
+	`Valid` TINYINT(4) NOT NULL DEFAULT 1, 
+	`CountryCode` INTEGER(11), 
+	PRIMARY KEY (`CAId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from cricket_association table:
+CAId	CAName	Address	Latitude	Longitude	Website	FBPage	Twitter	Email	Contact	Valid	CountryCode
+1	KPK	33434	0.0	0.0						1	None
+2	Balochistan		0.0	0.0						1	None
+3	Central Punjab		0.0	0.0						1	None
+*/

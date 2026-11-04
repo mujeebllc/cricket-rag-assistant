@@ -1,0 +1,20 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - article_tags.ArticleId → Article.ArticleId (guessed)
+*/
+
+
+CREATE TABLE article_tags (
+	`ID` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ArticleId` INTEGER(11) NOT NULL, 
+	`ObjectType` VARCHAR(20) NOT NULL, 
+	`ObjectId` INTEGER(11) NOT NULL, 
+	PRIMARY KEY (`ID`)
+)DEFAULT CHARSET=latin1 ENGINE=MyISAM COLLATE latin1_swedish_ci
+
+/*
+3 rows from article_tags table:
+ID	ArticleId	ObjectType	ObjectId
+3	1034	Tournament	30
+2	992	Tournament	29
+4	1030	Tournament	30
+*/

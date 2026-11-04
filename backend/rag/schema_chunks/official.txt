@@ -1,0 +1,20 @@
+
+CREATE TABLE official (
+	`Id` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`Type` VARCHAR(1) NOT NULL, 
+	`Designation` VARCHAR(50) NOT NULL, 
+	`Name` VARCHAR(80) NOT NULL, 
+	`ContactDetail` VARCHAR(100), 
+	`RefId` INTEGER(11) NOT NULL, 
+	`Pic` INTEGER(1) NOT NULL, 
+	`Priority` INTEGER(11) NOT NULL DEFAULT 1, 
+	PRIMARY KEY (`Id`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from official table:
+Id	Type	Designation	Name	ContactDetail	RefId	Pic	Priority
+135	R	Secretary	 Muhammad Shoaib Dar	153-G, Model Town, Lahore Cell: 0300-4340885, 042-35917153 	10	0	2
+137	R	Secretary	Mr. Asad Ali	Village Prang, Mohallah Safar Khel Bala, P.O Prang, Tehsil & District Charsada Cell: 0312-9597423	12	0	2
+140	R	Secretary	 Mr. Naeem Ahmad Khan	Street No. 3, Ghang Road, Sheikhupura Cell: 0334-4949496, Res: 056-3782362 	15	0	2
+*/

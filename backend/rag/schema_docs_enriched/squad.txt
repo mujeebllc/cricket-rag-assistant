@@ -1,0 +1,24 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - squad.TeamId → Team.TeamId (guessed)
+  - squad.PlayerId → Player.PlayerId (guessed)
+  - squad.TournamentId → Tournament.TournamentId (guessed)
+  - squad.TeamId → Team.TeamId (guessed)
+  - squad.PlayerId → Player.PlayerId (guessed)
+  - squad.TournamentId → Tournament.TournamentId (guessed)
+*/
+
+
+CREATE TABLE squad (
+	`TeamId` INTEGER(11) NOT NULL DEFAULT 0, 
+	`PlayerId` INTEGER(11) NOT NULL DEFAULT 0, 
+	`TournamentId` INTEGER(11) UNSIGNED NOT NULL, 
+	PRIMARY KEY (`TeamId`, `PlayerId`, `TournamentId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from squad table:
+TeamId	PlayerId	TournamentId
+401	3288	0
+401	5768	0
+401	8476	0
+*/

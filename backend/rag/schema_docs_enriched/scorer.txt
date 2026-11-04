@@ -1,0 +1,23 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - scorer.ScorerId → Scorer.ScorerId (guessed)
+  - scorer.ScorerId → Scorer.ScorerId (guessed)
+*/
+
+
+CREATE TABLE scorer (
+	`ScorerId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`UserName` VARCHAR(100) NOT NULL, 
+	`UserPassword` VARCHAR(255) NOT NULL, 
+	`ScorerType` VARCHAR(50), 
+	`LastUpdated` DATETIME, 
+	`FullName` VARCHAR(150), 
+	`PhoneNo` VARCHAR(20), 
+	`Email` VARCHAR(150), 
+	PRIMARY KEY (`ScorerId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_uca1400_ai_ci
+
+/*
+3 rows from scorer table:
+ScorerId	UserName	UserPassword	ScorerType	LastUpdated	FullName	PhoneNo	Email
+1	hanzala	abc123	T	2026-05-03 14:59:50	None	None	None
+*/

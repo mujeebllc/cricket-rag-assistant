@@ -1,0 +1,14 @@
+
+CREATE TABLE tournament_club (
+	`TournamentId` INTEGER(11) UNSIGNED NOT NULL, 
+	`ClubId` INTEGER(11) NOT NULL, 
+	PRIMARY KEY (`TournamentId`, `ClubId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from tournament_club table:
+TournamentId	ClubId
+160	1782
+160	2094
+160	2703
+*/

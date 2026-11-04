@@ -1,0 +1,81 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - live_matches.Season → season.SeasonId (guessed)
+  - live_matches.GroundId → Ground.GroundId (guessed)
+  - live_matches.TournamentId → Tournament.TournamentId (guessed)
+  - live_matches.Official → official.OfficialId (guessed)
+  - live_matches.GroupId → Group.GroupId (guessed)
+  - live_matches.Scorer → scorer.ScorerId (guessed)
+  - live_matches.UpdateBy → users.UserId (guessed)
+  - live_matches.ScorerId → Scorer.ScorerId (guessed)
+  - live_matches.Club → club.ClubId (guessed)
+  - live_matches.Team → team.TeamId (guessed)
+  - live_matches.City → city.CityId (guessed)
+*/
+
+
+CREATE TABLE live_matches (
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`Season` VARCHAR(7), 
+	`GroundId` INTEGER(11), 
+	`Dated` DATETIME, 
+	`Winner` INTEGER(10) UNSIGNED, 
+	`ResultDetail` VARCHAR(150), 
+	`Overs` INTEGER(11), 
+	`Status` VARCHAR(1) DEFAULT 'S', 
+	`Team1` INTEGER(10) NOT NULL, 
+	`Team2` INTEGER(10) NOT NULL, 
+	`Type` VARCHAR(20) NOT NULL DEFAULT 'Friendly Match', 
+	`TournamentId` INTEGER(10) UNSIGNED, 
+	`RoundId` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Format` VARCHAR(20) NOT NULL DEFAULT 'One Day', 
+	`Level` VARCHAR(10) DEFAULT ' ', 
+	`Live` TINYINT(1) NOT NULL DEFAULT 0, 
+	`RunnerUP` INTEGER(10), 
+	`Summary` VARCHAR(3500), 
+	`ManOfMatch` INTEGER(10), 
+	`Toss` INTEGER(10), 
+	`ScoreCard` INTEGER(11) NOT NULL, 
+	`CurrentInn` INTEGER(11) NOT NULL, 
+	`Commentary` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Official` INTEGER(11) NOT NULL DEFAULT 0, 
+	`GroupId` INTEGER(11), 
+	`Stage` VARCHAR(15) NOT NULL DEFAULT 'CF', 
+	`Scorer` VARCHAR(45), 
+	`Umpires` VARCHAR(80) NOT NULL, 
+	`Refree` VARCHAR(45) NOT NULL, 
+	`CoverPhoto` VARCHAR(50), 
+	`TagLine` VARCHAR(60) NOT NULL, 
+	`TournamentGroup` VARCHAR(30), 
+	`PredictionStart` INTEGER(11) NOT NULL DEFAULT 0, 
+	`UpdateBy` INTEGER(11) NOT NULL, 
+	`UpdateTime` DATETIME NOT NULL, 
+	`Team1RR` DOUBLE NOT NULL DEFAULT 0, 
+	`Team2RR` DOUBLE NOT NULL DEFAULT 0, 
+	`ScorerId` INTEGER(11) DEFAULT 0, 
+	`LiveType` VARCHAR(1), 
+	`ResultType` ENUM('WinLoss','Tie','Draw','No Result','Abandoned','Awarded','Conceded') NOT NULL DEFAULT 'WinLoss', 
+	`IncludeNetRR` INTEGER(1) NOT NULL DEFAULT 1, 
+	`CountryCode` INTEGER(11), 
+	`Club` TINYINT(1) DEFAULT 0, 
+	`Team` TINYINT(1) DEFAULT 1, 
+	`City` INTEGER(11), 
+	`MatchLevel` VARCHAR(20), 
+	`ICCRecognised` TINYINT(1) DEFAULT 0, 
+	`ICCEvent` TINYINT(1) DEFAULT 0, 
+	`EntryStatus` VARCHAR(1) DEFAULT 'S', 
+	`Team1Name` VARCHAR(45), 
+	`Team2Name` VARCHAR(45), 
+	`WinnerName` VARCHAR(45), 
+	`RunnerupName` VARCHAR(45), 
+	`CountryName` VARCHAR(50), 
+	`CityName` VARCHAR(50), 
+	`LastUpdated` TIMESTAMP NULL DEFAULT (current_timestamp()), 
+	PRIMARY KEY (`MatchNo`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from live_matches table:
+MatchNo	Season	GroundId	Dated	Winner	ResultDetail	Overs	Status	Team1	Team2	Type	TournamentId	RoundId	Format	Level	Live	RunnerUP	Summary	ManOfMatch	Toss	ScoreCard	CurrentInn	Commentary	Official	GroupId	Stage	Scorer	Umpires	Refree	CoverPhoto	TagLine	TournamentGroup	PredictionStart	UpdateBy	UpdateTime	Team1RR	Team2RR	ScorerId	LiveType	ResultType	IncludeNetRR	CountryCode	Club	Team	City	MatchLevel	ICCRecognised	ICCEvent	EntryStatus	Team1Name	Team2Name	WinnerName	RunnerupName	CountryName	CityName	LastUpdated
+9893	2025-26	300	2026-03-08 10:00:00	None	None	20	L	980	986	Tournament	191	72	T20		1	None	None	0	None	0	2	0	1	None	International	None			None		None	0	1	2026-05-03 14:39:16	0E-10	0E-10	0		WinLoss	1	91	0	1	52	International	1	1	S	India	New Zealand	None	None	India	Ahmedabad	2026-03-24 07:11:28
+9900	2025-26	116	2026-05-03 19:00:00	None	None	20	L	1001	996	Tournament	192	74	T20		1	None	None	None	None	0	2	1	1	0	Franchise	None			None		None	0	1	2026-05-03 18:45:35	0E-10	0E-10	0	B	WinLoss	1	92	0	1	5	Domestic	0	0	S	Peshawar Zalmi	Hyderabad Kingsmen	None	None	Pakistan	Lahore	2026-05-03 14:27:21
+*/

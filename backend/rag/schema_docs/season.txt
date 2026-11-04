@@ -1,0 +1,16 @@
+
+CREATE TABLE season (
+	`Season` VARCHAR(7) NOT NULL, 
+	`StartDate` DATE, 
+	`EndDate` DATE, 
+	`Current` VARCHAR(1) DEFAULT '0', 
+	PRIMARY KEY (`Season`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from season table:
+Season	StartDate	EndDate	Current
+2011-12	2011-05-01	2012-04-30	0
+2012-13	2012-05-01	2013-04-30	0
+2013-14	2013-05-01	2014-04-30	0
+*/

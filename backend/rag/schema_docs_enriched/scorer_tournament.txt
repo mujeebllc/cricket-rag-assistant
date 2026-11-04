@@ -1,0 +1,26 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - scorer_tournament.ScorerId → Scorer.ScorerId (guessed)
+  - scorer_tournament.TournamentId → Tournament.TournamentId (guessed)
+  - scorer_tournament.ScorerId → Scorer.ScorerId (guessed)
+  - scorer_tournament.TournamentId → Tournament.TournamentId (guessed)
+  - scorer_tournament.ScorerId → Scorer.ScorerId (guessed)
+  - scorer_tournament.ScorerId → Scorer.ScorerId (guessed)
+  - scorer_tournament.TournamentId → Tournament.TournamentId (guessed)
+  - scorer_tournament.TournamentId → Tournament.TournamentId (guessed)
+*/
+
+
+CREATE TABLE scorer_tournament (
+	`ScorerId` INTEGER(11) NOT NULL, 
+	`TournamentId` INTEGER(11) UNSIGNED NOT NULL, 
+	PRIMARY KEY (`ScorerId`, `TournamentId`), 
+	CONSTRAINT scorer_tournament_ibfk_1 FOREIGN KEY(`ScorerId`) REFERENCES scorer (`ScorerId`), 
+	CONSTRAINT scorer_tournament_ibfk_2 FOREIGN KEY(`TournamentId`) REFERENCES tournament (`TournamentId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_uca1400_ai_ci
+
+/*
+3 rows from scorer_tournament table:
+ScorerId	TournamentId
+1	191
+1	192
+*/

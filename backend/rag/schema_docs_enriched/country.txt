@@ -1,0 +1,17 @@
+
+CREATE TABLE country (
+	`CountryName` VARCHAR(50), 
+	`BoardName` VARCHAR(60), 
+	`ISOCode2` VARCHAR(2), 
+	`ISOCode3` VARCHAR(3), 
+	`CountryCode` INTEGER(11) NOT NULL DEFAULT 92, 
+	PRIMARY KEY (`CountryCode`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from country table:
+CountryName	BoardName	ISOCode2	ISOCode3	CountryCode
+Canada	Cricket Canada	CA	CAN	11
+United States of America	USA Cricket	US	USA	12
+West Indies	Cricket West Indies (CWI)		WI	13
+*/

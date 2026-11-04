@@ -1,0 +1,16 @@
+
+CREATE TABLE city (
+	`CityId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`CityName` VARCHAR(50) NOT NULL, 
+	`CountryCode` INTEGER(11), 
+	PRIMARY KEY (`CityId`), 
+	CONSTRAINT fk_city_country FOREIGN KEY(`CountryCode`) REFERENCES country (`CountryCode`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from city table:
+CityId	CityName	CountryCode
+1	Rawalpindi	92
+2	Islamabad	92
+3	Faisalabad	92
+*/

@@ -1,0 +1,26 @@
+
+CREATE TABLE ground (
+	`GroundId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`GroundName` VARCHAR(50), 
+	`Address` VARCHAR(100) DEFAULT ' ', 
+	`ContactPerson` VARCHAR(30) DEFAULT ' ', 
+	`ContactNo` VARCHAR(30) DEFAULT ' ', 
+	`Fee` VARCHAR(50) DEFAULT '0', 
+	`Status` INTEGER(11) DEFAULT 1, 
+	`Location` VARCHAR(25), 
+	`AssociationId` INTEGER(10) UNSIGNED, 
+	`CityId` INTEGER(11), 
+	`CountryCode` INTEGER(11), 
+	PRIMARY KEY (`GroundId`), 
+	CONSTRAINT `FK_ground_association` FOREIGN KEY(`AssociationId`) REFERENCES association (`AssociationId`), 
+	CONSTRAINT ground_ibfk_1 FOREIGN KEY(`CityId`) REFERENCES city (`CityId`), 
+	CONSTRAINT ground_ibfk_2 FOREIGN KEY(`CountryCode`) REFERENCES country (`CountryCode`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from ground table:
+GroundId	GroundName	Address	ContactPerson	ContactNo	Fee	Status	Location	AssociationId	CityId	CountryCode
+1	Pindi Club Ground,Rawalpindi	Near GHQ, Saddar, Rawalpindi	 	 	0	1	33.591234,73.051285	1	1	92
+2	502 Workshop Ground,Rawalpindi	Tulsa Road, Lalazar, Rawalpindi.	 	 	0	1	33.571561,73.064157	1	1	92
+3	ADA, Jahaz Ground,Rawalpindi	Sadiq Abad, Rawalpindi.	Bilal Sarwar	03335347794	0	1	33.621463,73.102866	1	1	92
+*/

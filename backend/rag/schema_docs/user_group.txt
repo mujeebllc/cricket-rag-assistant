@@ -1,0 +1,15 @@
+
+CREATE TABLE user_group (
+	`GroupId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`GroupName` VARCHAR(30) NOT NULL, 
+	`Valid` INTEGER(1) DEFAULT 1, 
+	PRIMARY KEY (`GroupId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from user_group table:
+GroupId	GroupName	Valid
+1	Admin	1
+2	Content Creator	1
+3	scorer	1
+*/

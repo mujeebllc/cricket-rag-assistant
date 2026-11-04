@@ -1,0 +1,38 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - round_team.TournamentId → Tournament.TournamentId (guessed)
+  - round_team.TeamId → Team.TeamId (guessed)
+  - round_team.Points → points.PointsId (guessed)
+*/
+
+
+CREATE TABLE round_team (
+	`RoundTeamId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`TournamentId` INTEGER(10) UNSIGNED NOT NULL, 
+	`RoundId` INTEGER(11) NOT NULL, 
+	`TeamId` INTEGER(11) NOT NULL, 
+	`TeamName` VARCHAR(80), 
+	`Played` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Won` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Lost` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Tie` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Draw` INTEGER(11) NOT NULL DEFAULT 0, 
+	`NoResult` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Abandoned` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Bonus` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Points` INTEGER(11) NOT NULL DEFAULT 0, 
+	`RunsFor` INTEGER(11) NOT NULL DEFAULT 0, 
+	`RunsAgainst` INTEGER(11) NOT NULL DEFAULT 0, 
+	`OversPlayed` DOUBLE NOT NULL DEFAULT 0, 
+	`OversBowled` DOUBLE NOT NULL DEFAULT 0, 
+	`RunRate` DOUBLE NOT NULL DEFAULT 0, 
+	`NetRunRate` DOUBLE NOT NULL DEFAULT 0, 
+	PRIMARY KEY (`RoundTeamId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from round_team table:
+RoundTeamId	TournamentId	RoundId	TeamId	TeamName	Played	Won	Lost	Tie	Draw	NoResult	Abandoned	Bonus	Points	RunsFor	RunsAgainst	OversPlayed	OversBowled	RunRate	NetRunRate
+12	160	1	2094	FBR	4	2	2	0	0	0	0	0	4	493	461	75.2000000000	65.4000000000	6.5600000000	-0.4900000000
+13	160	1	2705	NEPRA	4	2	2	0	0	0	0	0	4	485	482	63.3000000000	63.5000000000	7.6600000000	0.0700000000
+14	160	1	2704	PEMRA 	4	0	4	0	0	0	0	0	0	353	556	67.0000000000	66.1000000000	5.2700000000	-3.1400000000
+*/

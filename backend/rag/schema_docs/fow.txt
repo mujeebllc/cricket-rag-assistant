@@ -1,0 +1,29 @@
+
+CREATE TABLE fow (
+	`MatchNo` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Innings` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Wicket` INTEGER(11) NOT NULL DEFAULT 0, 
+	`Overs` DOUBLE, 
+	`Score` INTEGER(11), 
+	`Bowler` INTEGER(11), 
+	`Batsman` INTEGER(11), 
+	`BatsmanRuns` INTEGER(11), 
+	`NewBatsman` INTEGER(11), 
+	`Fielder` INTEGER(11), 
+	`HowOut` VARCHAR(10), 
+	`OutDetail` VARCHAR(30), 
+	`BatsmanName` VARCHAR(50), 
+	`NewBatsmanName` VARCHAR(50), 
+	`FielderName` VARCHAR(50), 
+	`BowlerName` VARCHAR(50), 
+	`Balls` INTEGER(11) DEFAULT 0, 
+	PRIMARY KEY (`MatchNo`, `Innings`, `Wicket`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from fow table:
+MatchNo	Innings	Wicket	Overs	Score	Bowler	Batsman	BatsmanRuns	NewBatsman	Fielder	HowOut	OutDetail	BatsmanName	NewBatsmanName	FielderName	BowlerName	Balls
+862	1	1	1.1000000000	0	1832	1736	0	15	0			Nouman Ali	Ayaz Khan	None	Waqas Ali	0
+862	1	2	2.2000000000	4	1831	259	4	1828	0			Shahid Gill	Amad Ali	None	Touseeq Shah	0
+862	1	3	5.4000000000	22	1832	15	4	1767	0			Ayaz Khan	Suleman Zaffar	None	Waqas Ali	0
+*/

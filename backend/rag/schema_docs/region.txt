@@ -1,0 +1,25 @@
+
+CREATE TABLE region (
+	`RegionId` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`RegionName` VARCHAR(45) NOT NULL DEFAULT ' ', 
+	`President` VARCHAR(45) DEFAULT ' ', 
+	`Secretary` VARCHAR(45) DEFAULT ' ', 
+	`Valid` TINYINT(1) NOT NULL DEFAULT 1, 
+	`Treasurer` VARCHAR(45) DEFAULT ' ', 
+	`PresidentContact` VARCHAR(100), 
+	`PresidentPic` INTEGER(1) NOT NULL DEFAULT 0, 
+	`SecretaryContact` VARCHAR(100), 
+	`SecretaryPic` INTEGER(1) NOT NULL DEFAULT 0, 
+	`TreasurerContact` VARCHAR(100), 
+	`TreasurerPic` INTEGER(1) NOT NULL DEFAULT 0, 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	PRIMARY KEY (`RegionId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from region table:
+RegionId	RegionName	President	Secretary	Valid	Treasurer	PresidentContact	PresidentPic	SecretaryContact	SecretaryPic	TreasurerContact	TreasurerPic	ShortName
+1	Abbotabad	Mr. Zahid Saeed	Mr. Maqsood Firdous	1		Street No. 3, Mohallah Naikabad Near Commerce College Dharmian Road, Mansehra Cell: 0314-5006688, 03	0	Mohallah Mangal Bagh, Police Line, Mardan Cell: 0333-8664010 E-mail: eagleentenpriseskpk@gmail.com	0		0	
+2	Bahawalpur	 Mr. Haider Kamran Chaudhry	 Rana Tariq Mahmood Iqbal	1	 	231/N, T.D.A Colony, Layyah Cell: 0300-6762031 	0	6- College Road, Bahawalnagar Cell: 0333-6319391 	0		0	
+3	Dera Murad Jamali	 Mr. Qaisar Khan Jamali	 Mr. Aamir Chindal	1	 	Jamali House, Jaffar Khan Jamali Road, Chaman Phatak, Quetta Cell: 0345-8986209, 081-2835493 (Res)	0	Masha Allah Amir Sports Center, Bazai Plaza, Sibi Cell: 0333-7771829 	0		0	
+*/

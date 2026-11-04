@@ -1,0 +1,15 @@
+
+CREATE TABLE player_follower (
+	`PlayerId` INTEGER(11) NOT NULL, 
+	`FUserId` INTEGER(11) NOT NULL, 
+	`FollowOn` DATETIME NOT NULL, 
+	PRIMARY KEY (`PlayerId`, `FUserId`)
+)DEFAULT CHARSET=latin1 ENGINE=MyISAM COLLATE latin1_swedish_ci
+
+/*
+3 rows from player_follower table:
+PlayerId	FUserId	FollowOn
+869	1	2019-02-24 23:40:43
+869	2	2019-02-25 15:06:39
+869	3	2019-02-25 17:16:04
+*/

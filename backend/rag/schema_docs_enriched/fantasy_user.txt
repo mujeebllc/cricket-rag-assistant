@@ -1,0 +1,23 @@
+
+CREATE TABLE fantasy_user (
+	`FUserId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`PhoneNo` VARCHAR(15) NOT NULL, 
+	`FPassword` VARCHAR(20) NOT NULL, 
+	`FullName` VARCHAR(50) NOT NULL, 
+	`Address` VARCHAR(80) NOT NULL, 
+	`DistrictId` INTEGER(11) NOT NULL, 
+	`Gender` ENUM('M','F') NOT NULL, 
+	`Email` VARCHAR(50) NOT NULL, 
+	`AgeGroup` VARCHAR(12) NOT NULL, 
+	`Incomplete` INTEGER(1) NOT NULL DEFAULT 0, 
+	`FBId` VARCHAR(30) DEFAULT '0', 
+	PRIMARY KEY (`FUserId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from fantasy_user table:
+FUserId	PhoneNo	FPassword	FullName	Address	DistrictId	Gender	Email	AgeGroup	Incomplete	FBId
+1	03325501021	ariesonly1	Muhammad Ishtiaq	Rawalpindi	1	M	clubinfopk@gmail.com	Over 40	0	None
+2	+971509595055	maazmaaz	Maaz Bin Mahmood	Abu Dhabi	2	M	pointed.out@gmail.com	Under 40	0	None
+3	3217501224	srt8JX7c5a8djx4	Saeed Akhtar	236, street 18, F-10/2	2	M	03217501224	Under 40	0	None
+*/

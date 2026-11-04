@@ -1,0 +1,11 @@
+
+CREATE TABLE `RECOVER_YOUR_DATA` (
+	text VARCHAR(255)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_unicode_ci
+
+/*
+3 rows from RECOVER_YOUR_DATA table:
+text
+All your data is backed up. You must pay 0.0088 BTC to bc1q35hf9sr8zar2tfaplyrw3llyu3mfcj632pwuwn In
+After payment send mail to us: rambler+2h2br@onionmail.org and we will provide a link for you to dow
+*/

@@ -1,0 +1,25 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - photo.PhotoId → Photo.PhotoId (guessed)
+  - photo.GalleryId → Gallery.GalleryId (guessed)
+  - photo.PhotoId → Photo.PhotoId (guessed)
+  - photo.GalleryId → Gallery.GalleryId (guessed)
+  - photo.GalleryId → Gallery.GalleryId (guessed)
+*/
+
+
+CREATE TABLE photo (
+	`PhotoId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`Caption` VARCHAR(250), 
+	`GalleryId` INTEGER(11), 
+	`Path` VARCHAR(50), 
+	PRIMARY KEY (`PhotoId`), 
+	CONSTRAINT fk_photo_gallery FOREIGN KEY(`GalleryId`) REFERENCES gallery (`GalleryId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci COMMENT='					'
+
+/*
+3 rows from photo table:
+PhotoId	Caption	GalleryId	Path
+3	New Zealand	9	gallery/newzealand.jpg
+4	Australia in UAE	9	gallery/australiaUAE.jpg
+5	Ù†ÙˆÛŒØ¯ Ù…Ù„Ú©ØŒ Ø±Ø§ÙˆÙ„Ù¾Ù†ÚˆÛŒ ÚˆØ³Ù¹Ø±Ú©Ù¹ Ú©ÛŒ Ø·Ø±Ù Ø³Û’ 300	10	gallery/navedmalik.jpg
+*/

@@ -1,0 +1,39 @@
+
+CREATE TABLE batting_detail (
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`Innings` INTEGER(11) NOT NULL, 
+	`PlayerId` INTEGER(11) NOT NULL, 
+	`Runs` INTEGER(11) DEFAULT 0, 
+	`BallsFaced` INTEGER(11) DEFAULT 0, 
+	`Fours` INTEGER(11) DEFAULT 0, 
+	`Sixes` INTEGER(11) DEFAULT 0, 
+	`Singles` INTEGER(11) DEFAULT 0, 
+	`Doubles` INTEGER(11) DEFAULT 0, 
+	`Threes` INTEGER(11) DEFAULT 0, 
+	`Dots` INTEGER(11) DEFAULT 0, 
+	`NotOut` TINYINT(1), 
+	`HowOut` VARCHAR(20), 
+	`OutDetail` VARCHAR(50), 
+	`Bowler` INTEGER(11), 
+	`Fielder` INTEGER(11), 
+	`Position` INTEGER(11) DEFAULT 0, 
+	`UpdateBy` INTEGER(11) NOT NULL, 
+	`LastUpdated` DATETIME NOT NULL, 
+	`BatsmanName` VARCHAR(100), 
+	`FielderName` VARCHAR(100), 
+	`BowlerName` VARCHAR(100), 
+	`TeamId` INTEGER(11), 
+	`TeamName` VARCHAR(100), 
+	`MatchType` VARCHAR(1), 
+	PRIMARY KEY (`MatchNo`, `Innings`, `PlayerId`), 
+	CONSTRAINT `FK_batting_detail_innings` FOREIGN KEY(`MatchNo`, `Innings`) REFERENCES innings (`MatchNo`, `Innings`), 
+	CONSTRAINT `FK_batting_detail_player` FOREIGN KEY(`PlayerId`) REFERENCES player (`PlayerId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from batting_detail table:
+MatchNo	Innings	PlayerId	Runs	BallsFaced	Fours	Sixes	Singles	Doubles	Threes	Dots	NotOut	HowOut	OutDetail	Bowler	Fielder	Position	UpdateBy	LastUpdated	BatsmanName	FielderName	BowlerName	TeamId	TeamName	MatchType
+5	1	1081	30	30	0	0	0	0	0	0	0			0	0	1	0	0000-00-00 00:00:00	Shahzad Khan Daad	None	None	62	Pak Potohar XI	C
+5	1	1082	25	25	0	0	0	0	0	0	0			0	0	2	0	0000-00-00 00:00:00	Ch. M Usman	None	None	62	Pak Potohar XI	C
+5	2	127	40	40	0	0	0	0	0	0	1		Not Out	0	0	2	0	0000-00-00 00:00:00	Khurram	None	None	32	Pak Sports Cricket Club	C
+*/

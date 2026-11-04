@@ -1,0 +1,19 @@
+
+CREATE TABLE livescore (
+	`Id` DATETIME NOT NULL, 
+	`Team1` VARCHAR(45) NOT NULL, 
+	`Team2` VARCHAR(45), 
+	`Score1` VARCHAR(100), 
+	`Bowl1` VARCHAR(100), 
+	`Score2` VARCHAR(100), 
+	`Bowl2` VARCHAR(100), 
+	`Result` VARCHAR(45), 
+	`Tournament` VARCHAR(45), 
+	PRIMARY KEY (`Id`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from livescore table:
+Id	Team1	Team2	Score1	Bowl1	Score2	Bowl2	Result	Tournament
+2012-07-19 00:10:41	COD	CMT Golra	Live Coverage	From Pindi Club	Live Coverage	From Pindi Club		RDCA Inter Departmental Tournament
+*/

@@ -1,0 +1,23 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - sw_user.UserId → Users.UserId (guessed)
+  - sw_user.GroupId → Group.GroupId (guessed)
+  - sw_user.UserId → Users.UserId (guessed)
+*/
+
+
+CREATE TABLE sw_user (
+	`UserId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`UserName` VARCHAR(100), 
+	`UserPassword` VARCHAR(255), 
+	`Valid` TINYINT(1) DEFAULT 1, 
+	`GroupId` INTEGER(11), 
+	PRIMARY KEY (`UserId`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from sw_user table:
+UserId	UserName	UserPassword	Valid	GroupId
+7	shehrozriaz789	3a223d5fb50707244a37d8b6c4b5a155ac321bc8b5dc844f44d7bc7fd955393d	1	None
+8	string	473287f8298dba7163a897908958f7c0eae733e25d2e027992ea2edc9bed2fa8	1	None
+9	abdulrehman	f6e221e9714f2b0639c2509133461a105d299b3d34c0e48a96b8fcb4fd054a44	1	None
+*/

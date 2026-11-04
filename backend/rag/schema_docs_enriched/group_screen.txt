@@ -1,0 +1,27 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - group_screen.ScreenId → Screen.ScreenId (guessed)
+  - group_screen.GroupId → Group.GroupId (guessed)
+  - group_screen.ScreenId → Screen.ScreenId (guessed)
+  - group_screen.GroupId → Group.GroupId (guessed)
+  - group_screen.ScreenId → Screen.ScreenId (guessed)
+  - group_screen.ScreenId → Screen.ScreenId (guessed)
+  - group_screen.GroupId → Group.GroupId (guessed)
+  - group_screen.GroupId → Group.GroupId (guessed)
+*/
+
+
+CREATE TABLE group_screen (
+	`ScreenId` INTEGER(11) NOT NULL, 
+	`GroupId` INTEGER(11) NOT NULL, 
+	PRIMARY KEY (`ScreenId`, `GroupId`), 
+	CONSTRAINT group_screen_ibfk_1 FOREIGN KEY(`ScreenId`) REFERENCES screen (`ScreenId`), 
+	CONSTRAINT group_screen_ibfk_2 FOREIGN KEY(`GroupId`) REFERENCES user_group (`GroupId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_general_ci
+
+/*
+3 rows from group_screen table:
+ScreenId	GroupId
+1	1
+2	1
+3	1
+*/

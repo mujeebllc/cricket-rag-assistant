@@ -1,0 +1,18 @@
+
+CREATE TABLE feedback (
+	`Id` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`Name` VARCHAR(45) NOT NULL, 
+	`Email` VARCHAR(45), 
+	`MsgSubject` VARCHAR(50), 
+	`Msg` VARCHAR(300) NOT NULL, 
+	`Dated` DATETIME NOT NULL, 
+	PRIMARY KEY (`Id`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from feedback table:
+Id	Name	Email	MsgSubject	Msg	Dated
+1	ishtiaq	aries@gmail.com	firs feedback	this is first feedback	2012-07-27 22:14:59
+2	Ishtiaq	aries@gmail.com	test	test test	2012-07-27 22:31:02
+3	nawal	ajkdfkds	kfdfjdk	dkfjdsklf d	2012-07-27 22:41:16
+*/

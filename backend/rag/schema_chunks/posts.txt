@@ -1,0 +1,23 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - posts.PostId → Posts.PostId (guessed)
+  - posts.PostId → Posts.PostId (guessed)
+*/
+
+
+CREATE TABLE posts (
+	`PostId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`Dated` DATETIME, 
+	`Comments` VARCHAR(200), 
+	`URL` VARCHAR(80), 
+	`PostImg` VARCHAR(80), 
+	`Visible` VARCHAR(1) DEFAULT '1', 
+	PRIMARY KEY (`PostId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from posts table:
+PostId	Dated	Comments	URL	PostImg	Visible
+17	2014-01-21 00:53:42	<b>Match Update </b>, Kiwi Boys Cricket Club beats Al Nazar Cricket Club by 17 runs.	/summary.php?No=1455&theater=0	players/P242.jpg	1
+18	2014-01-22 11:55:55	<b>Player Updated </b>, Ahsan UL Haq of West Indies Cricket Club(Rawalpindi)	/player.php?No=819&theater=0	/players/P819.jpg	1
+19	2014-01-22 11:59:36	<b>Player Updated </b>, Ayaz Sarfraz of West Indies Cricket Club(Rawalpindi)	/player.php?No=460&theater=0	/players/P460.jpg	1
+*/

@@ -1,0 +1,19 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - edition.EditionId → Edition.EditionId (guessed)
+  - edition.Season → season.SeasonId (guessed)
+  - edition.EditionId → Edition.EditionId (guessed)
+*/
+
+
+CREATE TABLE edition (
+	`EditionId` INTEGER(11) NOT NULL, 
+	`EditionName` VARCHAR(30) NOT NULL, 
+	`Season` VARCHAR(7) NOT NULL, 
+	PRIMARY KEY (`EditionId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from edition table:
+EditionId	EditionName	Season
+
+*/

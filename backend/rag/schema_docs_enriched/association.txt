@@ -1,0 +1,34 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - association.AssociationId → Association.AssociationId (guessed)
+  - association.City → city.CityId (guessed)
+  - association.RegionId → Region.RegionId (guessed)
+  - association.AssociationId → Association.AssociationId (guessed)
+*/
+
+
+CREATE TABLE association (
+	`AssociationId` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`AssociationName` VARCHAR(45) NOT NULL DEFAULT ' ', 
+	`President` VARCHAR(45) DEFAULT ' ', 
+	`Secretary` VARCHAR(45) DEFAULT ' ', 
+	`Valid` TINYINT(1) NOT NULL DEFAULT 1, 
+	`City` VARCHAR(45) DEFAULT ' ', 
+	`Treasurer` VARCHAR(45) DEFAULT ' ', 
+	`RegionId` INTEGER(11) NOT NULL, 
+	`PresidentContact` VARCHAR(100), 
+	`SecretaryContact` VARCHAR(100), 
+	`TreasurerContact` VARCHAR(100), 
+	`PresidentPic` INTEGER(1) DEFAULT 0, 
+	`SecretaryPic` INTEGER(1) DEFAULT 0, 
+	`TreasurerPic` INTEGER(1) DEFAULT 0, 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	PRIMARY KEY (`AssociationId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from association table:
+AssociationId	AssociationName	President	Secretary	Valid	City	Treasurer	RegionId	PresidentContact	SecretaryContact	TreasurerContact	PresidentPic	SecretaryPic	TreasurerPic	ShortName
+1	Rawalpindi	Mr. Afzal Javed	Mr. Asif Zaheer	1	Rawalpindi	Mr. Sajid Hussain Shah	14	Pindi Cricket Stadium, Double Road, Near Shamshabad, Rawalpindi Cell: 0346-4992281, 0300-5132931	Sports Officer, PMAD Sports Board, CMA Complex Bakeri Road,   Rawalpindi Cantt Ph: 0333-5154862	House No. 406, Street Kamal Din, Chourharpal, Rawalpindi Ph: 0346-5086808	0	0	0	
+2	Islamabad	Mr. Nasir Iqbal	Mr. Irfan Manzoor	1	Islamabad	Mr. Ghazanfar Mehmood	7	House No. 46, Street No. 37, G-10/4, Islamabad Cell: 0300-5130294	House No. 484, Street No, 3, F 11/1, Islamabad Cell: 0334-5414243, 051-2224434	House No. 166, Street No. 9, Margallah Town, Phase-I, Islamabad Cell: 0322-5007066, 051-2843357	0	0	0	
+3	 Peshawar	 Syed Fayyaz Ali Shah	Mr. Asghar Ali Khan	1	Peshawar	Mr. Shah Faisal Malik	12	Karimi House 88, Nishterabad, Peshawar City Ph: 0300-8589700, 091-5863218(Res)	Zulfiqar Ali Ghee Dealer, 25th Afzal Market, Dalazak Road, Peshawar Cell: 0300-5992977, 091-5243775 	Mohallah Marozai, P/O  Deh Bahadur, Peshawar Ph: 0312-9944115, 0312-9933115 (Res)	0	0	0	
+*/

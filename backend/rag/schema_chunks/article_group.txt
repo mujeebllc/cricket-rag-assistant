@@ -1,0 +1,24 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - article_group.GroupId → Group.GroupId (guessed)
+  - article_group.GroupId → Group.GroupId (guessed)
+*/
+
+
+CREATE TABLE article_group (
+	`GroupId` INTEGER(11) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT, 
+	`Heading` VARCHAR(100), 
+	`HeadArticle` INTEGER(11), 
+	`Image` VARCHAR(80), 
+	`Caption` VARCHAR(200), 
+	`Status` TINYINT(1) DEFAULT 1, 
+	`DispOrder` INTEGER(11), 
+	PRIMARY KEY (`GroupId`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from article_group table:
+GroupId	Heading	HeadArticle	Image	Caption	Status	DispOrder
+1	About Club Info	1	image/gallery/clubinfobegin.jpg	Club Info vision and features	1	1
+2	International Cricket	2	image/gallery/1470312.jpg	Pakistan vs Srilanka	1	2
+3	Some Club cricket	3	image/gallery/c1.jpg	Club Cricket in Rawalpindi 	1	3
+*/

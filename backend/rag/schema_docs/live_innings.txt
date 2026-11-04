@@ -1,0 +1,34 @@
+
+CREATE TABLE live_innings (
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`Innings` INTEGER(11) NOT NULL, 
+	`Score` INTEGER(11), 
+	`Overs` DOUBLE, 
+	`Byes` INTEGER(11), 
+	`LByes` INTEGER(11), 
+	`Wides` INTEGER(11), 
+	`NoBalls` INTEGER(11), 
+	`BattingTeam` INTEGER(11), 
+	`BowlingTeam` INTEGER(11), 
+	`Wickets` INTEGER(11) DEFAULT 0, 
+	`UpdateBy` INTEGER(11) NOT NULL, 
+	`UpdateTime` TIMESTAMP NULL DEFAULT (current_timestamp()), 
+	`BattingTeamName` VARCHAR(50), 
+	`BowlingTeamName` VARCHAR(50), 
+	matchtype VARCHAR(20), 
+	`LastUpdated` TIMESTAMP NULL DEFAULT (current_timestamp()), 
+	`CurrentStrikePlayerId` INTEGER(11), 
+	`ballsInCurrentOver` INTEGER(11), 
+	`CurrentNonStrikePlayerId` INTEGER(11), 
+	`CurrentBowlerPlayerId` INTEGER(11), 
+	`IsCompleted` INTEGER(11), 
+	PRIMARY KEY (`MatchNo`, `Innings`)
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from live_innings table:
+MatchNo	Innings	Score	Overs	Byes	LByes	Wides	NoBalls	BattingTeam	BowlingTeam	Wickets	UpdateBy	UpdateTime	BattingTeamName	BowlingTeamName	matchtype	LastUpdated	CurrentStrikePlayerId	ballsInCurrentOver	CurrentNonStrikePlayerId	CurrentBowlerPlayerId	IsCompleted
+9893	1	0	0E-10	0	0	0	0	980	986	0	1	2026-05-02 09:50:43	India	New Zealand	None	2026-05-02 10:24:27	18841	0	18662	18697	1
+9893	2	0	0E-10	0	0	0	0	986	980	0	1	2026-05-02 10:26:25	New Zealand	India	None	2026-05-03 14:39:16	18703	0	18694	18664	0
+9900	1	0	0E-10	0	0	0	0	996	1001	0	1	2026-05-03 15:15:00	Hyderabad Kingsmen	Peshawar Zalmi	None	2026-05-03 16:55:47	18924	0	18577	4129	1
+*/

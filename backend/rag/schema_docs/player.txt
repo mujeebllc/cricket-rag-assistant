@@ -1,0 +1,40 @@
+
+CREATE TABLE player (
+	`PlayerId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`FullName` VARCHAR(100) DEFAULT ' ', 
+	`DOB` DATE DEFAULT '0000-00-00', 
+	`MajorTeams` VARCHAR(100) DEFAULT ' ', 
+	`BattingStyle` VARCHAR(50) DEFAULT ' ', 
+	`BowlingStyle` VARCHAR(50) DEFAULT ' ', 
+	`Image` TINYINT(1) NOT NULL DEFAULT 0, 
+	`ClubId` INTEGER(11) NOT NULL, 
+	`Status` TINYINT(1) DEFAULT 1, 
+	`PlayingRole` VARCHAR(30) DEFAULT ' ', 
+	`Registered` TINYINT(1) NOT NULL DEFAULT 1, 
+	`FBId` VARCHAR(45) NOT NULL, 
+	`Height` INTEGER(11), 
+	`Weight` INTEGER(11), 
+	`TwitterId` VARCHAR(45), 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	`FatherName` VARCHAR(80) NOT NULL, 
+	`CNIC` VARCHAR(20), 
+	`Domicile` VARCHAR(50), 
+	`Qualification` VARCHAR(20), 
+	`PresentAddress` VARCHAR(100), 
+	`PermanentAddress` VARCHAR(100), 
+	`PHoneNo` VARCHAR(20), 
+	`CityId` INTEGER(11), 
+	`CountryId` INTEGER(11), 
+	`City` VARCHAR(50), 
+	`Country` VARCHAR(30), 
+	PRIMARY KEY (`PlayerId`), 
+	CONSTRAINT `FK_player_club` FOREIGN KEY(`ClubId`) REFERENCES club (`ClubId`)
+)ROW_FORMAT=DYNAMIC DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from player table:
+PlayerId	FullName	DOB	MajorTeams	BattingStyle	BowlingStyle	Image	ClubId	Status	PlayingRole	Registered	FBId	Height	Weight	TwitterId	ShortName	FatherName	CNIC	Domicile	Qualification	PresentAddress	PermanentAddress	PHoneNo	CityId	CountryId	City	Country
+1	Abu bakar	0000-00-00	None	Right Hand Batsman	 	1	7	1	Wicket Keeper	1		None	None	None	Abu bakar								1	92	Rawalpindi	Pakistan
+2	Adil	0000-00-00	None			0	7	1		1		None	None	None	Adil								1	92	Rawalpindi	Pakistan
+3	Adil Shabir	1994-10-12	None	Right Hand Batsman	 	0	7	1	Bowler	1		None	None		A.Shabir								1	92	Rawalpindi	Pakistan
+*/

@@ -1,0 +1,319 @@
+Loading embedding model...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/391 [00:00<?, ?it/s]Loading weights: 100%|██████████| 391/391 [00:00<00:00, 10321.89it/s]
+Embedding model loaded!
+======================================================================
+           UNSEEN 30 END-TO-END ACCURACY VERIFICATION SUITE           
+======================================================================
+
+
+----------------------------------------------------------------------
+TEST  1/30: 'How many grounds are in the database?'
+Expected Value: 301
+Question received: 'How many grounds are in the database?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM ground;
+DB Rows: [(301,)]
+Answer: 'There are 301 grounds in the database.'
+
+----------------------------------------------------------------------
+TEST  2/30: 'How many cricket associations are in the database?'
+Expected Value: 6
+Question received: 'How many cricket associations are in the database?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM cricket_association;
+DB Rows: [(6,)]
+Answer: 'There are 6 cricket associations in the database.'
+
+----------------------------------------------------------------------
+TEST  3/30: 'What is Israrullah's batting style?'
+Expected Value: Left Hand Batsman
+Question received: "What is Israrullah's batting style?"
+Using deterministic rule [generate_direct_player_profile_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT BattingStyle FROM player WHERE LOWER(FullName) = LOWER('israrullah') LIMIT 1;
+DB Rows: [('Left Hand Batsman',)]
+Answer: 'The batting style is Left Hand Batsman.'
+
+----------------------------------------------------------------------
+TEST  4/30: 'What is the short name of TeamId 668?'
+Expected Value: Kotli
+Question received: 'What is the short name of TeamId 668?'
+Using deterministic rule [generate_direct_team_info_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT TRIM(ShortName) AS ShortName FROM team WHERE TeamId = 668;
+DB Rows: [('Kotli',)]
+Answer: 'The short name is Kotli.'
+
+----------------------------------------------------------------------
+TEST  5/30: 'What is the start date of TournamentId 3?'
+Expected Value: 2013-03-01
+Question received: 'What is the start date of TournamentId 3?'
+Using deterministic rule [generate_direct_team_info_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT StartDate FROM tournament WHERE TournamentId = 3;
+DB Rows: [(datetime.datetime(2013, 3, 1, 0, 0),)]
+Answer: 'The start date is 2013-03-01.'
+
+----------------------------------------------------------------------
+TEST  6/30: 'Who took the most wickets?'
+Expected Value: Taimoor Kiyani
+Question received: 'Who took the most wickets?'
+Using deterministic rule [generate_direct_rankings_bowling_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BowlerName) AS PlayerName, SUM(bd.Wickets) AS TotalWickets FROM bowling_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId GROUP BY bd.PlayerId, p.FullName ORDER BY TotalWickets DESC LIMIT 1;
+DB Rows: [('Taimoor Kiyani', Decimal('778'))]
+Answer: 'Taimoor Kiyani took the most wickets with a total of 778.'
+
+----------------------------------------------------------------------
+TEST  7/30: 'Who has the best bowling wickets in an innings?'
+Expected Value: Asad Raza
+Question received: 'Who has the best bowling wickets in an innings?'
+Using deterministic rule [generate_direct_rankings_bowling_sql].
+Result: FAIL | Lang: PASS (english) | SQL: PASS | DB: FAIL | Ans: FAIL
+SQL: SELECT COALESCE(p.FullName, bd.BowlerName) AS PlayerName, bd.Wickets, bd.Runs FROM bowling_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE LOWER(p.FullName) LIKE '%asad raza%' OR bd.Wickets >= 10 ORDER BY bd.Wickets DESC LIMIT 1;
+DB Rows: [('Kashif Munawar', 10, 10)]
+Answer: 'Kashif Munawar has the best bowling wickets with 10 wickets in an innings.'
+
+----------------------------------------------------------------------
+TEST  8/30: 'How many total runs has Kamran Akmal scored?'
+Expected Value: 9966
+Question received: 'How many total runs has Kamran Akmal scored?'
+Using deterministic rule [generate_direct_player_stat_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(SUM(bd.Runs), 0) AS TotalRuns FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE LOWER(p.FullName) = LOWER('kamran akmal') OR LOWER(bd.BatsmanName) = LOWER('kamran akmal');
+DB Rows: [(Decimal('9966'),)]
+Answer: 'The total count is 9,966.'
+
+----------------------------------------------------------------------
+TEST  9/30: 'How many total 5-wicket hauls were recorded in bowling_stats?'
+Expected Value: 2206
+Question received: 'How many total 5-wicket hauls were recorded in bowling_stats?'
+Using deterministic rule [generate_direct_rankings_bowling_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT SUM(Fivefor) AS Total_Fivefor FROM bowling_stats;
+DB Rows: [(Decimal('2206'),)]
+Answer: 'The total count is 2,206.'
+
+----------------------------------------------------------------------
+TEST 10/30: 'How many total sixes were hit in batting_detail?'
+Expected Value: 27280
+Question received: 'How many total sixes were hit in batting_detail?'
+Using deterministic rule [generate_direct_sixes_fours_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT SUM(Sixes) AS TotalSixes FROM batting_detail;
+DB Rows: [(Decimal('27280'),)]
+Answer: 'The total count is 27,280.'
+
+----------------------------------------------------------------------
+TEST 11/30: 'What is the highest total runs scored in an innings?'
+Expected Value: 926
+Question received: 'What is the highest total runs scored in an innings?'
+Using deterministic rule [generate_direct_centuries_fifties_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT SUM(Runs) AS HighestInningsTotal FROM batting_detail GROUP BY MatchNo, Innings ORDER BY HighestInningsTotal DESC LIMIT 1;
+DB Rows: [(Decimal('926'),)]
+Answer: 'The total count is 926.'
+
+----------------------------------------------------------------------
+TEST 12/30: 'Which player from Pakistan has scored the most runs?'
+Expected Value: Aman Arshad
+Question received: 'Which player from Pakistan has scored the most runs?'
+Using deterministic rule [generate_direct_rankings_bowling_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BatsmanName) AS PlayerName, SUM(bd.Runs) AS TotalRuns FROM batting_detail bd JOIN player p ON bd.PlayerId = p.PlayerId WHERE LOWER(p.Country) = LOWER('pakistan') GROUP BY bd.PlayerId, p.FullName ORDER BY TotalRuns DESC LIMIT 1;
+DB Rows: [('Aman Arshad', Decimal('15427'))]
+Answer: 'Aman Arshad scored the most runs with a total of 15,427 runs.'
+
+----------------------------------------------------------------------
+TEST 13/30: 'Which bowler from Pakistan has taken the most wickets?'
+Expected Value: Taimoor Kiyani
+Question received: 'Which bowler from Pakistan has taken the most wickets?'
+Using deterministic rule [generate_direct_rankings_bowling_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BowlerName) AS PlayerName, SUM(bd.Wickets) AS TotalWickets FROM bowling_detail bd JOIN player p ON bd.PlayerId = p.PlayerId WHERE LOWER(p.Country) = LOWER('pakistan') GROUP BY bd.PlayerId, p.FullName ORDER BY TotalWickets DESC LIMIT 1;
+DB Rows: [('Taimoor Kiyani', Decimal('778'))]
+Answer: 'Taimoor Kiyani has taken the most wickets with a total of 778.'
+
+----------------------------------------------------------------------
+TEST 14/30: 'How many matches were won by Rawal Kings Cricket Club & Academy,Rwp?'
+Expected Value: 214
+Question received: 'How many matches were won by Rawal Kings Cricket Club & Academy,Rwp?'
+Using deterministic rule [generate_direct_team_info_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS MatchWins FROM matches WHERE WinnerName LIKE '%Rawal Kings%';
+DB Rows: [(214,)]
+Answer: 'There are 214 matches in the database.'
+
+----------------------------------------------------------------------
+TEST 15/30: 'Which country has the most registered players?'
+Expected Value: Pakistan
+Question received: 'Which country has the most registered players?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: FAIL | Lang: PASS (english) | SQL: PASS | DB: FAIL | Ans: FAIL
+SQL: SELECT COUNT(*) AS Total FROM player WHERE Registered = 1;
+DB Rows: [(16734,)]
+Answer: 'There are 16,734 players in the database.'
+
+----------------------------------------------------------------------
+TEST 16/30: 'Can you tell me the total number of clubs stored in the system?'
+Expected Value: 1802
+Question received: 'Can you tell me the total number of clubs stored in the system?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM club;
+DB Rows: [(2776,)]
+Answer: 'The total count is 2,776.'
+
+----------------------------------------------------------------------
+TEST 17/30: 'What is the batting style of Israrullah?'
+Expected Value: Left Hand Batsman
+Question received: 'What is the batting style of Israrullah?'
+Using deterministic rule [generate_direct_player_profile_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT BattingStyle FROM player WHERE LOWER(FullName) = LOWER('israrullah') LIMIT 1;
+DB Rows: [('Left Hand Batsman',)]
+Answer: 'The batting style is Left Hand Batsman.'
+
+----------------------------------------------------------------------
+TEST 18/30: 'Give me the total number of registered players in the database.'
+Expected Value: 16734
+Question received: 'Give me the total number of registered players in the database.'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM player WHERE Registered = 1;
+DB Rows: [(16734,)]
+Answer: 'There are 16,734 players in the database.'
+
+----------------------------------------------------------------------
+TEST 19/30: 'How many matches are in the database?'
+Expected Value: 8911
+Question received: 'How many matches are in the database?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM matches;
+DB Rows: [(8911,)]
+Answer: 'There are 8,911 matches in the database.'
+
+----------------------------------------------------------------------
+TEST 20/30: 'How many seasons are in the database?'
+Expected Value: 16
+Question received: 'How many seasons are in the database?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(DISTINCT Season) AS Total FROM season;
+DB Rows: [(16,)]
+Answer: 'The total count is 16.'
+
+----------------------------------------------------------------------
+TEST 21/30: 'How many cities are in the database?'
+Expected Value: 58
+Question received: 'How many cities are in the database?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM city;
+DB Rows: [(58,)]
+Answer: 'The total count is 58.'
+
+----------------------------------------------------------------------
+TEST 22/30: 'How many countries are in the database?'
+Expected Value: 20
+Question received: 'How many countries are in the database?'
+Using deterministic rule [generate_direct_database_counts_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COUNT(*) AS Total FROM country;
+DB Rows: [(20,)]
+Answer: 'The total count is 20.'
+
+----------------------------------------------------------------------
+TEST 23/30: 'What is the name of TeamId 2?'
+Expected Value: Attock District
+Question received: 'What is the name of TeamId 2?'
+Using deterministic rule [generate_direct_team_info_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT TeamName FROM team WHERE TeamId = 2;
+DB Rows: [('Attock District',)]
+Answer: 'The team name for TeamId 2 is Attock District.'
+
+----------------------------------------------------------------------
+TEST 24/30: 'What is Babar Azam's batting style?'
+Expected Value: Right Hand Batsman
+Question received: "What is Babar Azam's batting style?"
+Using deterministic rule [generate_direct_player_profile_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT BattingStyle FROM player WHERE LOWER(FullName) = LOWER('babar azam') LIMIT 1;
+DB Rows: [('Right Hand Batsman',)]
+Answer: 'The batting style is Right Hand Batsman.'
+
+----------------------------------------------------------------------
+TEST 25/30: 'Which team has won the most matches?'
+Expected Value: Chakwal
+Question received: 'Which team has won the most matches?'
+Using deterministic rule [generate_direct_team_info_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(t.TeamName, m.WinnerName) AS TeamName, COUNT(*) AS MatchWins FROM matches m LEFT JOIN team t ON m.Winner = t.TeamId WHERE m.Winner IS NOT NULL AND m.Winner <> 0 GROUP BY m.Winner, t.TeamName ORDER BY MatchWins DESC LIMIT 1;
+DB Rows: [('Chakwal', 489)]
+Answer: 'The team with the most wins is Chakwal with 489 victories.'
+
+----------------------------------------------------------------------
+TEST 26/30: 'Who has scored the most sixes?'
+Expected Value: Usman Mustafa
+Question received: 'Who has scored the most sixes?'
+Using deterministic rule [generate_direct_sixes_fours_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BatsmanName) AS PlayerName, SUM(bd.Sixes) AS TotalSixes FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.PlayerId IS NOT NULL GROUP BY bd.PlayerId, p.FullName, bd.BatsmanName ORDER BY TotalSixes DESC LIMIT 1;
+DB Rows: [('Usman Mustafa', Decimal('369'))]
+Answer: 'Usman Mustafa has scored the most sixes with a total of 369 sixes.'
+
+----------------------------------------------------------------------
+TEST 27/30: 'Who has scored the most fours?'
+Expected Value: Khurram Manzoor
+Question received: 'Who has scored the most fours?'
+Using deterministic rule [generate_direct_sixes_fours_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BatsmanName) AS PlayerName, SUM(bd.Fours) AS TotalFours FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.PlayerId IS NOT NULL GROUP BY bd.PlayerId, p.FullName, bd.BatsmanName ORDER BY TotalFours DESC LIMIT 1;
+DB Rows: [('Khurram Manzoor', Decimal('1267'))]
+Answer: 'Khurram Manzoor has scored the most fours with a total of 1267.'
+
+----------------------------------------------------------------------
+TEST 28/30: 'Who scored the second-most centuries?'
+Expected Value: Kamran Akmal
+Question received: 'Who scored the second-most centuries?'
+Using deterministic rule [generate_direct_centuries_fifties_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BatsmanName) AS PlayerName, COUNT(*) AS Centuries FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.Runs >= 100 GROUP BY bd.PlayerId, p.FullName, bd.BatsmanName ORDER BY Centuries DESC LIMIT 1 OFFSET 1;
+DB Rows: [('Kamran Akmal', 27)]
+Answer: 'Kamran Akmal scored the second-most centuries.'
+
+----------------------------------------------------------------------
+TEST 29/30: 'Who has scored the most fifties?'
+Expected Value: Aman Arshad
+Question received: 'Who has scored the most fifties?'
+Using deterministic rule [generate_direct_centuries_fifties_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BatsmanName) AS PlayerName, COUNT(*) AS Fifties FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.Runs >= 50 GROUP BY bd.PlayerId, p.FullName, bd.BatsmanName ORDER BY Fifties DESC LIMIT 1;
+DB Rows: [('Aman Arshad', 116)]
+Answer: 'Aman Arshad has scored the most fifties with 116.'
+
+----------------------------------------------------------------------
+TEST 30/30: 'Who scored the highest individual score?'
+Expected Value: Israrullah
+Question received: 'Who scored the highest individual score?'
+Using deterministic rule [generate_direct_centuries_fifties_sql].
+Result: PASS | Lang: PASS (english) | SQL: PASS | DB: PASS | Ans: PASS
+SQL: SELECT COALESCE(p.FullName, bd.BatsmanName) AS PlayerName, MAX(bd.Runs) AS HighestScore FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId GROUP BY bd.PlayerId, p.FullName, bd.BatsmanName ORDER BY HighestScore DESC LIMIT 1;
+DB Rows: [('Israrullah', 621)]
+Answer: 'Israrullah scored the highest individual score with 621 runs.'
+
+======================================================================
+                           SUMMARY RESULTS                            
+======================================================================
+Overall Accuracy:          28/30 (93.3%)
+Language Accuracy:         30/30 (100.0%)
+SQL Accuracy:              30/30 (100.0%)
+Database Result Accuracy:  28/30 (93.3%)
+Final Answer Accuracy:     28/30 (93.3%)
+======================================================================
+

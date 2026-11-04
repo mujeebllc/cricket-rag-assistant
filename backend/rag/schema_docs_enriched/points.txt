@@ -1,0 +1,31 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - points.TournamentId → Tournament.TournamentId (guessed)
+  - points.TeamId → Team.TeamId (guessed)
+  - points.Points → points.PointsId (guessed)
+*/
+
+
+CREATE TABLE points (
+	`TournamentId` INTEGER(10) UNSIGNED NOT NULL, 
+	`RoundId` INTEGER(11) NOT NULL, 
+	`TeamId` INTEGER(11) NOT NULL, 
+	`Played` INTEGER(11) NOT NULL, 
+	`Won` INTEGER(11) NOT NULL, 
+	`Lost` INTEGER(11) NOT NULL, 
+	`Tie` INTEGER(11) NOT NULL, 
+	`Draw` INTEGER(11) NOT NULL, 
+	`Abondoned` INTEGER(11) NOT NULL, 
+	`Points` INTEGER(11) NOT NULL, 
+	`RunsFor` INTEGER(11) NOT NULL, 
+	`RunsAgainst` INTEGER(11) NOT NULL, 
+	`WicketTaken` INTEGER(11) NOT NULL, 
+	`WicketsLost` INTEGER(11) NOT NULL, 
+	`RunRate` DOUBLE NOT NULL, 
+	`NetRunRate` DOUBLE NOT NULL
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from points table:
+TournamentId	RoundId	TeamId	Played	Won	Lost	Tie	Draw	Abondoned	Points	RunsFor	RunsAgainst	WicketTaken	WicketsLost	RunRate	NetRunRate
+
+*/

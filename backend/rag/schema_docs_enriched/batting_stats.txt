@@ -1,0 +1,42 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - batting_stats.PlayerId → Player.PlayerId (guessed)
+  - batting_stats.Season → season.SeasonId (guessed)
+  - batting_stats.Matches → matches.MatchesId (guessed)
+  - batting_stats.PlayerId → Player.PlayerId (guessed)
+  - batting_stats.Season → season.SeasonId (guessed)
+*/
+
+
+CREATE TABLE batting_stats (
+	`PlayerId` INTEGER(11) NOT NULL, 
+	`Season` VARCHAR(10) NOT NULL, 
+	`Stage` VARCHAR(20) NOT NULL, 
+	`Format` VARCHAR(10) NOT NULL, 
+	`ICC` VARCHAR(20), 
+	`Matches` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Inn` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`NotOut` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Runs` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`HS` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Average` DECIMAL(6, 2), 
+	`BF` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`SR` DECIMAL(6, 2), 
+	`Hundreds` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Fifties` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Zeros` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Fours` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Sixes` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Catches` INTEGER(11), 
+	`Stumps` INTEGER(11), 
+	`PlayerName` VARCHAR(50) NOT NULL, 
+	`LastMatch` INTEGER(11) DEFAULT 0, 
+	PRIMARY KEY (`PlayerId`, `Season`, `Stage`, `Format`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_uca1400_ai_ci
+
+/*
+3 rows from batting_stats table:
+PlayerId	Season	Stage	Format	ICC	Matches	Inn	NotOut	Runs	HS	Average	BF	SR	Hundreds	Fifties	Zeros	Fours	Sixes	Catches	Stumps	PlayerName	LastMatch
+1	2013-14	District	Three Day	0	1	1	0	9	9	None	0	None	0	0	0	0	0	0	0	Abu bakar	970
+1	2015-16	First Class	One Day	0	1	1	0	33	33	None	0	None	0	0	0	0	0	0	0	Abu bakar	3474
+2	2012-13	Club	One Day	0	4	4	0	87	40	None	0	None	0	0	0	0	0	0	0	Adil	828
+*/

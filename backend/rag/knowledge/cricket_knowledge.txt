@@ -1,0 +1,23 @@
+Cricket is a bat-and-ball sport played between two teams of eleven players.
+
+The main formats of international cricket are Test cricket, One Day International (ODI), and Twenty20 International (T20I).
+
+In Test cricket, a match can last up to five days and each team normally has two innings.
+
+An ODI match consists of 50 overs per side.
+
+A T20I match consists of 20 overs per side.
+
+A cricket team has eleven players on the field.
+
+The batting team tries to score runs, while the bowling and fielding team tries to dismiss the batters and restrict the number of runs.
+
+A boundary scored by hitting the ball to the boundary without bouncing is worth six runs.
+
+A boundary where the ball reaches the boundary after bouncing is worth four runs.
+
+A wicket is the dismissal of a batter.
+
+Common ways of dismissal include bowled, caught, leg before wicket (LBW), run out, stumped, and hit wicket.
+
+The International Cricket Council (ICC) is the global governing body for international cricket.

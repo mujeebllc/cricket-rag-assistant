@@ -1,0 +1,17 @@
+
+CREATE TABLE budget (
+	`Id` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`BudgetMonth` DATE, 
+	`HeadId` INTEGER(11), 
+	`Amount` INTEGER(11), 
+	PRIMARY KEY (`Id`), 
+	CONSTRAINT fk_budget_sectionhead FOREIGN KEY(`HeadId`) REFERENCES section_head (`HeadId`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from budget table:
+Id	BudgetMonth	HeadId	Amount
+1	2024-10-01	4	19500
+2	2024-11-01	11	250000
+3	2024-10-01	9	36000
+*/

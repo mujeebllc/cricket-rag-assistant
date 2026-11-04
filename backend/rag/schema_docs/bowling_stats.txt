@@ -1,0 +1,32 @@
+
+CREATE TABLE bowling_stats (
+	`PlayerId` INTEGER(11) NOT NULL, 
+	`Season` VARCHAR(10) NOT NULL, 
+	`Stage` VARCHAR(20) NOT NULL, 
+	`Format` VARCHAR(10) NOT NULL, 
+	`ICC` VARCHAR(20), 
+	`Matches` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Inn` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Balls` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Runs` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Wickets` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`BBI` VARCHAR(8), 
+	`BBM` VARCHAR(8) DEFAULT '0', 
+	`Average` DECIMAL(6, 2), 
+	`Economy` DECIMAL(6, 2), 
+	`StrikeRate` DECIMAL(6, 2), 
+	`Fourfor` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Fivefor` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`Tenfor` INTEGER(10) UNSIGNED DEFAULT 0, 
+	`PlayerName` VARCHAR(50) NOT NULL, 
+	`LastMatch` INTEGER(11) DEFAULT 0, 
+	PRIMARY KEY (`PlayerId`, `Season`, `Stage`, `Format`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_uca1400_ai_ci
+
+/*
+3 rows from bowling_stats table:
+PlayerId	Season	Stage	Format	ICC	Matches	Inn	Balls	Runs	Wickets	BBI	BBM	Average	Economy	StrikeRate	Fourfor	Fivefor	Tenfor	PlayerName	LastMatch
+1	2013-14	District	Three Day	0	1	1	12	9	0	0/9	0/9	None	4.50	None	0	0	0	Abu bakar	970
+1	2015-16	First Class	One Day	0	1	1	48	33	2	2/33	2/33	16.50	4.12	24.00	0	0	0	Abu bakar	3474
+2	2012-13	Club	One Day	0	4	4	96	87	8	3/0	3/0	10.88	5.44	12.00	0	0	0	Adil	828
+*/

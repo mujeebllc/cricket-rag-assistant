@@ -1,0 +1,25 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - match_squad.TeamId → Team.TeamId (guessed)
+  - match_squad.PlayerId → Player.PlayerId (guessed)
+  - match_squad.TeamId → Team.TeamId (guessed)
+  - match_squad.PlayerId → Player.PlayerId (guessed)
+*/
+
+
+CREATE TABLE match_squad (
+	`TeamId` INTEGER(11) NOT NULL DEFAULT 0, 
+	`PlayerId` INTEGER(11) NOT NULL DEFAULT 0, 
+	`MatchNo` INTEGER(11) NOT NULL, 
+	`ShirtNo` INTEGER(11), 
+	`TeamType` VARCHAR(1) DEFAULT 'C', 
+	PRIMARY KEY (`TeamId`, `PlayerId`, `MatchNo`), 
+	CONSTRAINT fk_matchsquad_match FOREIGN KEY(`MatchNo`) REFERENCES matches (`MatchNo`) ON DELETE CASCADE
+)DEFAULT CHARSET=latin1 ENGINE=InnoDB COLLATE latin1_swedish_ci
+
+/*
+3 rows from match_squad table:
+TeamId	PlayerId	MatchNo	ShirtNo	TeamType
+3	17189	8670	23	C
+3	17190	8670	12	C
+3	17202	8670	0	C
+*/

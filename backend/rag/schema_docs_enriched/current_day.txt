@@ -1,0 +1,14 @@
+
+CREATE TABLE current_day (
+	`FinDay` DATE NOT NULL, 
+	`Current` TINYINT(1) DEFAULT 1, 
+	PRIMARY KEY (`FinDay`)
+)DEFAULT CHARSET=utf8mb3 ENGINE=InnoDB COLLATE utf8mb3_general_ci
+
+/*
+3 rows from current_day table:
+FinDay	Current
+2023-01-01	0
+2024-06-01	0
+2024-09-03	0
+*/

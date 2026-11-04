@@ -1,0 +1,19 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - tags.TagId → Tags.TagId (guessed)
+  - tags.TagId → Tags.TagId (guessed)
+*/
+
+
+CREATE TABLE tags (
+	`TagId` INTEGER(10) UNSIGNED NOT NULL AUTO_INCREMENT, 
+	`TagName` VARCHAR(50) NOT NULL, 
+	`Slug` VARCHAR(60) NOT NULL, 
+	`CreatedAt` DATETIME DEFAULT (current_timestamp()), 
+	PRIMARY KEY (`TagId`)
+)DEFAULT CHARSET=utf8mb4 ENGINE=InnoDB COLLATE utf8mb4_uca1400_ai_ci
+
+/*
+3 rows from tags table:
+TagId	TagName	Slug	CreatedAt
+
+*/

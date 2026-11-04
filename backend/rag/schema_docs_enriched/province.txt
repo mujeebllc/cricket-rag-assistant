@@ -1,0 +1,21 @@
+/* LOGICAL RELATIONSHIPS (Auto-guessed):
+  - province.ProvinceId → Province.ProvinceId (guessed)
+  - province.ProvinceId → Province.ProvinceId (guessed)
+*/
+
+
+CREATE TABLE province (
+	`ProvinceId` INTEGER(11) NOT NULL AUTO_INCREMENT, 
+	`ProvinceName` VARCHAR(30) NOT NULL, 
+	`Description` VARCHAR(50) NOT NULL, 
+	`ShortName` VARCHAR(10) NOT NULL, 
+	PRIMARY KEY (`ProvinceId`)
+)DEFAULT CHARSET=latin1 ENGINE=MyISAM COLLATE latin1_swedish_ci
+
+/*
+3 rows from province table:
+ProvinceId	ProvinceName	Description	ShortName
+1	Punjab		
+2	Sind		
+3	Balochistan		
+*/
