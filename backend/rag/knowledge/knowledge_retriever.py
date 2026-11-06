@@ -1,5 +1,10 @@
+import sys
+from pathlib import Path
+
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from settings import EMBEDDING_MODEL, KNOWLEDGE_COLLECTION, QDRANT_URL
 
 
 # ============================================================
@@ -8,7 +13,7 @@ from qdrant_client import QdrantClient
 
 print("Loading knowledge embedding model...")
 
-model = SentenceTransformer("BAAI/bge-m3")
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 print("Knowledge embedding model loaded!")
 
@@ -17,17 +22,14 @@ print("Knowledge embedding model loaded!")
 # CONNECT TO QDRANT
 # ============================================================
 
-client = QdrantClient(
-    host="localhost",
-    port=6333
-)
+client = QdrantClient(url=QDRANT_URL)
 
 
 # ============================================================
 # COLLECTION
 # ============================================================
 
-COLLECTION_NAME = "cricket_knowledge"
+COLLECTION_NAME = KNOWLEDGE_COLLECTION
 
 
 # ============================================================

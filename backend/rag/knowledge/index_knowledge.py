@@ -1,8 +1,11 @@
+import sys
 from pathlib import Path
 
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from settings import EMBEDDING_MODEL, KNOWLEDGE_COLLECTION, QDRANT_URL
 
 
 # ============================================================
@@ -11,7 +14,7 @@ from qdrant_client.models import Distance, VectorParams, PointStruct
 
 KNOWLEDGE_DIR = Path(__file__).parent
 
-COLLECTION_NAME = "cricket_knowledge"
+COLLECTION_NAME = KNOWLEDGE_COLLECTION
 
 
 # ============================================================
@@ -20,7 +23,7 @@ COLLECTION_NAME = "cricket_knowledge"
 
 print("Loading embedding model...")
 
-model = SentenceTransformer("BAAI/bge-m3")
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 print("Embedding model loaded!")
 
@@ -29,10 +32,7 @@ print("Embedding model loaded!")
 # CONNECT TO QDRANT
 # ============================================================
 
-client = QdrantClient(
-    host="localhost",
-    port=6333
-)
+client = QdrantClient(url=QDRANT_URL)
 
 
 # ============================================================

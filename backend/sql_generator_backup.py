@@ -4,6 +4,7 @@ import time
 from sqlalchemy import text
 
 from langchain_ollama import OllamaLLM
+from settings import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 from rag.retriever import retrieve_schema
 from prompts.system_prompt import SYSTEM_PROMPT
@@ -15,8 +16,9 @@ from database.db import engine
 # ============================================================
 
 llm = OllamaLLM(
-    model="qwen2.5:7b",
-    temperature=0
+    model=OLLAMA_MODEL,
+    temperature=0,
+    base_url=OLLAMA_BASE_URL,
 )
 
 

@@ -1,5 +1,7 @@
+from pathlib import Path
 import sys
-sys.path.append('/home/inara/aiproject/backend')
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 from database.db import engine
 from sqlalchemy import text
 

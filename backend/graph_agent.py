@@ -4,16 +4,17 @@ from langchain_ollama import OllamaLLM
 from langgraph.graph import StateGraph, END
 import re
 
+from settings import OLLAMA_BASE_URL, OLLAMA_MODEL, get_database_url
+
 # -----------------------------
 # Database Connection
 # -----------------------------
-DATABASE_URL = "mysql+pymysql://appuser:app123@127.0.0.1:3306/clubinfo_afc"
-engine = create_engine(DATABASE_URL)
+engine = create_engine(get_database_url())
 
 # -----------------------------
 # Load LLM
 # -----------------------------
-llm = OllamaLLM(model="qwen2.5:7b")
+llm = OllamaLLM(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL)
 
 # -----------------------------
 # Graph State
@@ -145,4 +146,3 @@ while True:
         break
 
     graph.invoke({"question": question})
-

@@ -1,5 +1,6 @@
 import sys
-sys.path.append('/home/inara/aiproject/backend')
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from sql_generator import generate_sql
 from answer_generator import generate_answer, detect_language
@@ -369,4 +370,3 @@ def run_suite():
 
 if __name__ == "__main__":
     run_suite()
-

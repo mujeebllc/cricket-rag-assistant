@@ -1,14 +1,15 @@
-import os
 import re
 import sys
+from pathlib import Path
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(BACKEND_DIR))
 
 from database.db import db
 
-OUTPUT_DIR = "rag/schema_docs"
+OUTPUT_DIR = Path(__file__).resolve().parent / "schema_docs"
 
-os.makedirs(OUTPUT_DIR, exist_ok=True)
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 tables = db.get_usable_table_names()
 
@@ -41,7 +42,7 @@ for table in tables:
     for column in columns:
         text += f"- {column}\n"
 
-    with open(f"{OUTPUT_DIR}/{table}.txt", "w", encoding="utf-8") as f:
+    with open(OUTPUT_DIR / f"{table}.txt", "w", encoding="utf-8") as f:
         f.write(text)
 
 print("\n✅ Schema extraction completed.")

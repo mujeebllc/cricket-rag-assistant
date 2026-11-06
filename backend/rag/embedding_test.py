@@ -1,8 +1,14 @@
+import sys
+from pathlib import Path
+
 from sentence_transformers import SentenceTransformer
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from settings import EMBEDDING_MODEL
 
 print("Loading embedding model...")
 
-model = SentenceTransformer("BAAI/bge-m3")
+model = SentenceTransformer(EMBEDDING_MODEL)
 
 print("Model loaded successfully!")
 

@@ -2,8 +2,13 @@ import re
 from datetime import datetime, date
 from langchain_ollama import OllamaLLM
 from prompts.answer_prompt import ANSWER_PROMPT
+from settings import OLLAMA_BASE_URL, OLLAMA_MODEL
 
-llm = OllamaLLM(model="qwen2.5:7b", temperature=0)
+llm = OllamaLLM(
+    model=OLLAMA_MODEL,
+    temperature=0,
+    base_url=OLLAMA_BASE_URL,
+)
 
 # Vocabulary dictionaries for Roman Urdu detection
 STRONG_ROMAN_URDU_WORDS = {
@@ -239,4 +244,3 @@ def generate_answer(question, sql, columns, rows):
             ans = "No matching records were found."
 
     return ans
-

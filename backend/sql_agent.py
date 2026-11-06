@@ -1,24 +1,21 @@
 from sqlalchemy import create_engine, text
 from langchain_ollama import OllamaLLM
 
+from settings import OLLAMA_BASE_URL, OLLAMA_MODEL, get_database_url
+
 # -------------------------
 # Database Connection
 # -------------------------
-DATABASE_URL = "mysql+pymysql://appuser:app123@127.0.0.1:3306/clubinfo_afc"
-
-engine = create_engine(DATABASE_URL)
+engine = create_engine(get_database_url())
 
 # -------------------------
-# Load Qwen
+# Load Ollama Model
 # -------------------------
-llm = OllamaLLM(model="qwen2.5:7b")
+llm = OllamaLLM(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL)
 
 print("✅ LangChain + Ollama Loaded")
 print("✅ Database Connected")
 
-# -------------------------
-# Test Database
-# -------------------------
 with engine.connect() as conn:
     result = conn.execute(text("SHOW TABLES;"))
 

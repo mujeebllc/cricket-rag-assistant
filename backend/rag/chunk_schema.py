@@ -1,8 +1,10 @@
 import os
 import shutil
+from pathlib import Path
 
-INPUT_DIR = "schema_docs_enriched"
-OUTPUT_DIR = "schema_chunks"
+RAG_DIR = Path(__file__).resolve().parent
+INPUT_DIR = RAG_DIR / "schema_docs_enriched"
+OUTPUT_DIR = RAG_DIR / "schema_chunks"
 
 # Recreate output folder
 if os.path.exists(OUTPUT_DIR):
@@ -17,8 +19,8 @@ for filename in os.listdir(INPUT_DIR):
     if not filename.endswith(".txt"):
         continue
 
-    src = os.path.join(INPUT_DIR, filename)
-    dst = os.path.join(OUTPUT_DIR, filename)
+    src = INPUT_DIR / filename
+    dst = OUTPUT_DIR / filename
 
     with open(src, "r", encoding="utf-8") as f:
         text = f.read()

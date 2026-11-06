@@ -5,6 +5,7 @@ from langchain_ollama import OllamaLLM
 
 from rag.retriever import retrieve_schema
 from prompts.system_prompt import SYSTEM_PROMPT
+from settings import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 
 # ============================================================
@@ -12,8 +13,9 @@ from prompts.system_prompt import SYSTEM_PROMPT
 # ============================================================
 
 llm = OllamaLLM(
-    model="qwen2.5:7b",
-    temperature=0
+    model=OLLAMA_MODEL,
+    temperature=0,
+    base_url=OLLAMA_BASE_URL,
 )
 
 
@@ -106,5 +108,4 @@ KNOWN_TABLES = {
 
 
 from sql_generator import generate_sql
-
 

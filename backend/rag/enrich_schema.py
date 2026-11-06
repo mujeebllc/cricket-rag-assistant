@@ -1,32 +1,40 @@
-import os
 import re
-import glob
+from pathlib import Path
 
-def enrich_individual_schemas(input_dir="schema_docs", output_dir="schema_docs_enriched"):
+
+RAG_DIR = Path(__file__).resolve().parent
+
+
+def enrich_individual_schemas(input_dir=None, output_dir=None):
     """
     Reads all table .txt files, guesses relationships using column names,
     and saves enriched copies to a new folder.
     """
     
-    # Create output folder if it doesn't exist
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    input_dir = Path(input_dir) if input_dir is not None else RAG_DIR / "schema_docs"
+    output_dir = Path(output_dir) if output_dir is not None else RAG_DIR / "schema_docs_enriched"
+    if not input_dir.is_absolute():
+        input_dir = RAG_DIR / input_dir
+    if not output_dir.is_absolute():
+        output_dir = RAG_DIR / output_dir
+
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True, exist_ok=True)
         print(f"✅ Created output folder: {output_dir}")
 
-    # Get all .txt files in the input directory
-    table_files = glob.glob(os.path.join(input_dir, "*.txt"))
+    table_files = sorted(input_dir.glob("*.txt"))
     
     if not table_files:
         print(f"❌ No .txt files found in {input_dir}/")
         return
     
     # --- Step 1: Build a list of all table names (from filenames) ---
-    all_tables = [os.path.basename(f).replace('.txt', '') for f in table_files]
+    all_tables = [f.stem for f in table_files]
     print(f"📊 Found {len(all_tables)} tables: {', '.join(all_tables[:5])}...")
     
     # --- Step 2: Process each file ---
     for file_path in table_files:
-        table_name = os.path.basename(file_path).replace('.txt', '')
+        table_name = file_path.stem
         
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -80,7 +88,7 @@ def enrich_individual_schemas(input_dir="schema_docs", output_dir="schema_docs_e
             print(f"⚠️ {table_name}: No relationships guessed")
         
         # --- Step 6: Save the enriched version to the output folder ---
-        out_path = os.path.join(output_dir, f"{table_name}.txt")
+        out_path = output_dir / f"{table_name}.txt"
         with open(out_path, 'w', encoding='utf-8') as f:
             f.write(new_content)
     

@@ -1,21 +1,22 @@
 import re
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
+from settings import EMBEDDING_MODEL, QDRANT_URL, SCHEMA_COLLECTION
 
 # ============================================================
 # LOAD EMBEDDING MODEL
 # ============================================================
 
 print("Loading embedding model...")
-model = SentenceTransformer("BAAI/bge-m3")
+model = SentenceTransformer(EMBEDDING_MODEL)
 print("Embedding model loaded!")
 
 # ============================================================
 # CONNECT TO QDRANT
 # ============================================================
 
-client = QdrantClient(host="localhost", port=6333)
-COLLECTION_NAME = "cricket_schema"
+client = QdrantClient(url=QDRANT_URL)
+COLLECTION_NAME = SCHEMA_COLLECTION
 
 
 def get_table_name(filename):

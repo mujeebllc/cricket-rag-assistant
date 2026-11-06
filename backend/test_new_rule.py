@@ -1,10 +1,13 @@
 import py_compile
 import sys
-sys.path.append('/home/inara/aiproject/backend')
+from pathlib import Path
+
+BACKEND_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BACKEND_DIR))
 
 print("=== STEP 1: RUN PY_COMPILE ===")
 try:
-    py_compile.compile('/home/inara/aiproject/backend/sql_generator.py', doraise=True)
+    py_compile.compile(str(BACKEND_DIR / "sql_generator.py"), doraise=True)
     print("SUCCESS: sql_generator.py py_compile passed cleanly with no syntax errors!")
 except Exception as e:
     print(f"FAILED: py_compile error: {e}")

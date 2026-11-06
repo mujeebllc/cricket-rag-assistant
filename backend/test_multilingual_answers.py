@@ -1,9 +1,11 @@
 import sys
 import py_compile
 import re
+from pathlib import Path
 from sqlalchemy import text
 
-sys.path.append('/home/inara/aiproject/backend')
+BACKEND_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BACKEND_DIR))
 
 print("======================================================================")
 print("            MULTILINGUAL ANSWER GENERATION VERIFICATION               ")
@@ -12,12 +14,12 @@ print("======================================================================\n"
 # 1. COMPILATION CHECK
 print("--- 1. PY_COMPILE CHECK ---")
 files_to_check = [
-    '/home/inara/aiproject/backend/prompts/answer_prompt.py',
-    '/home/inara/aiproject/backend/answer_generator.py',
+    BACKEND_DIR / "prompts" / "answer_prompt.py",
+    BACKEND_DIR / "answer_generator.py",
 ]
 for f in files_to_check:
-    py_compile.compile(f, doraise=True)
-    print(f"  [PASS] {f.split('/')[-1]} compiled successfully.")
+    py_compile.compile(str(f), doraise=True)
+    print(f"  [PASS] {f.name} compiled successfully.")
 
 from sql_generator import generate_sql
 from answer_generator import generate_answer, detect_language

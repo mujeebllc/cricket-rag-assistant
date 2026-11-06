@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from sqlalchemy import text
 from database.db import engine
 from sql_generator import generate_sql
@@ -249,7 +251,8 @@ def run_accuracy_test():
     # SAVE REPORT
     # ========================================================
 
-    with open("accuracy_report.txt", "w") as f:
+    report_path = Path(__file__).resolve().with_name("accuracy_report.txt")
+    with report_path.open("w", encoding="utf-8") as f:
 
         f.write(
             "NL2SQL CHATBOT - ACCURACY REPORT\n"

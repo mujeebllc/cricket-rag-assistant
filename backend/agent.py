@@ -1,28 +1,16 @@
 from sqlalchemy import create_engine, text
 from langchain_ollama import OllamaLLM
-
-# -----------------------------
-# Database Configuration
-# -----------------------------
-DB_USER = "appuser"
-DB_PASSWORD = "app123"
-DB_HOST = "127.0.0.1"
-DB_PORT = "3306"
-DB_NAME = "clubinfo_afc"
-
-DATABASE_URL = (
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+from settings import OLLAMA_BASE_URL, OLLAMA_MODEL, get_database_url
 
 # -----------------------------
 # Connect to Database
 # -----------------------------
-engine = create_engine(DATABASE_URL)
+engine = create_engine(get_database_url())
 
 # -----------------------------
-# Load Qwen Model
+# Load Ollama Model
 # -----------------------------
-llm = OllamaLLM(model="qwen2.5:7b")
+llm = OllamaLLM(model=OLLAMA_MODEL, base_url=OLLAMA_BASE_URL)
 
 print("=" * 50)
 print("🤖 Cricket SQL Agent Started!")

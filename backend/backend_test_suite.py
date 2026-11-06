@@ -1,8 +1,10 @@
 import sys
 import time
 import py_compile
+from pathlib import Path
 
-sys.path.append('/home/inara/aiproject/backend')
+BACKEND_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BACKEND_DIR))
 
 print("======================================================================")
 print("             CRICKET ASSISTANT - COMPREHENSIVE BACKEND TEST SUITE     ")
@@ -13,20 +15,20 @@ print("======================================================================\n"
 # --------------------------------------------------------------------
 print("--- 1. TESTING PYTHON FILES COMPILATION (py_compile) ---")
 files_to_compile = [
-    '/home/inara/aiproject/backend/sql_generator.py',
-    '/home/inara/aiproject/backend/answer_generator.py',
-    '/home/inara/aiproject/backend/prompts/system_prompt.py',
-    '/home/inara/aiproject/backend/rag/retriever.py',
-    '/home/inara/aiproject/backend/chatbot.py',
+    BACKEND_DIR / "sql_generator.py",
+    BACKEND_DIR / "answer_generator.py",
+    BACKEND_DIR / "prompts" / "system_prompt.py",
+    BACKEND_DIR / "rag" / "retriever.py",
+    BACKEND_DIR / "chatbot.py",
 ]
 
 compile_errors = 0
 for f in files_to_compile:
     try:
-        py_compile.compile(f, doraise=True)
-        print(f"  [PASS] {f.split('/')[-1]} compiled successfully.")
+        py_compile.compile(str(f), doraise=True)
+        print(f"  [PASS] {f.name} compiled successfully.")
     except Exception as e:
-        print(f"  [FAIL] {f.split('/')[-1]} compilation failed: {e}")
+        print(f"  [FAIL] {f.name} compilation failed: {e}")
         compile_errors += 1
 
 if compile_errors > 0:

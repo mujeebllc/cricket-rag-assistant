@@ -1,12 +1,14 @@
 import sys
 import py_compile
+from pathlib import Path
 
-sys.path.append('/home/inara/aiproject/backend')
+BACKEND_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BACKEND_DIR))
 
 print("==================================================")
 print("1. RUNNING PY_COMPILE ON sql_generator.py")
 print("==================================================")
-py_compile.compile('/home/inara/aiproject/backend/sql_generator.py', doraise=True)
+py_compile.compile(str(BACKEND_DIR / "sql_generator.py"), doraise=True)
 print("-> py_compile PASSED: 0 syntax errors found.")
 
 from sql_generator import generate_direct_team_tournament_participation_sql

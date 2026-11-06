@@ -1,22 +1,24 @@
+import sys
+from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from settings import EMBEDDING_MODEL, QDRANT_URL, SCHEMA_COLLECTION
 
 # -----------------------------
 # Load Embedding Model
 # -----------------------------
 print("Loading embedding model...")
-model = SentenceTransformer("BAAI/bge-m3")
+model = SentenceTransformer(EMBEDDING_MODEL)
 print("Model loaded!")
 
 # -----------------------------
 # Connect to Qdrant
 # -----------------------------
-client = QdrantClient(
-    host="localhost",
-    port=6333
-)
+client = QdrantClient(url=QDRANT_URL)
 
-COLLECTION_NAME = "cricket_schema"
+COLLECTION_NAME = SCHEMA_COLLECTION
 
 # -----------------------------
 # Search Function

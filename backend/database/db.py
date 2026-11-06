@@ -1,11 +1,10 @@
 from sqlalchemy import create_engine
 from langchain_community.utilities import SQLDatabase
 
-# Database URL
-DATABASE_URL = "mysql+pymysql://appuser:app123@127.0.0.1:3306/clubinfo_afc"
+from settings import get_database_url
 
 # Create Engine
-engine = create_engine(DATABASE_URL)
+engine = create_engine(get_database_url())
 
 # Create SQLDatabase object
 db = SQLDatabase(engine)

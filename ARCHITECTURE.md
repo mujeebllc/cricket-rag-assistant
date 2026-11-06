@@ -8,9 +8,10 @@ This document outlines the architectural blueprint, design principles, component
 
 The Cricket Assistant is a specialized **Natural Language to SQL (NL2SQL)** platform enhanced with **Retrieval-Augmented Generation (RAG)**. It is purpose-built to query a rich relational database of cricket information (`clubinfo_afc`) consisting of over 70 tables, supporting complex aggregations, multi-table joins, and statistical calculations across both **English** and **Roman Urdu**.
 
-The architecture combines deterministic speed with generative intelligence:
+The active API combines deterministic speed with generative intelligence:
 - Common, formulaic queries execute via **high-speed deterministic pattern matching** in sub-milliseconds.
-- Open-ended, conversational, and complex ad-hoc queries route to a **Semantic RAG pipeline** backed by dense schema embeddings, dependency injection, and a local **Qwen 2.5 7B** language model.
+- Open-ended, conversational, and complex ad-hoc queries route to a **schema RAG pipeline** backed by dense schema embeddings, dependency injection, and a configurable Ollama model.
+- A separate cricket-knowledge RAG remains in `backend/rag/knowledge/` for future use; it uses its own collection and is not part of the active API flow.
 
 ---
 
@@ -44,7 +45,7 @@ graph TB
 
     subgraph LLM_Engine ["LLM Inference & Validation"]
         SystemPrompt["Domain System Prompt & Schema Guidelines"]
-        Ollama["Local LLM: Qwen 2.5 7B (Ollama)"]
+        Ollama["Configurable Ollama LLM"]
         Guardrails["SQL Safety Guardrails (Regex Validator)"]
         DryRunValidator["MariaDB Dry-Run Validator (LIMIT 1)"]
         RetryLoop["Self-Correction Feedback Loop"]
@@ -148,7 +149,7 @@ Queries pass through a two-tier evaluation mechanism:
 
 ### 3.6 LLM Inference & Self-Healing Validation Loop (`sql_generator.py`)
 1. **Prompt Construction**: Merges `SYSTEM_PROMPT`, retrieved schema definitions, relational constraints, and user question into an instruction payload.
-2. **Inference**: Invokes `qwen2.5:7b` with temperature `0` via Ollama.
+2. **Inference**: Invokes the model configured by `OLLAMA_MODEL` with temperature `0` via Ollama.
 3. **Output Cleaning**: Strips markdown code blocks, backticks, comments, and extra text.
 4. **Safety & Table Verification**:
    - Enforces read-only semantics (`SELECT` and `WITH` only).
@@ -207,3 +208,8 @@ erDiagram
 | **CORS / Origin Blocking** | Universal Allowed Origins Middleware | FastAPI `CORSMiddleware` configured with `allow_origins=["*"]` |
 | **Non-Serializable Cell Types** | Explicit Pre-Serialization | `serialize_cell()` transforms Decimal/Date objects |
 
+## 6. Deployment Configuration and Paths
+
+`backend/settings.py` loads the repository-root `.env` file using a path derived from its own location. Database credentials, database connection details, Ollama model/server, embedding model, Qdrant URL, and collection names are centralized there. Set `DB_USER` and `DB_PASSWORD` in `.env`; credentials are not embedded in application modules. See `README.md` for the environment-variable list and setup steps.
+
+Data-processing scripts resolve schema input/output folders from their own file locations rather than the shell's working directory. The frontend defaults to the API on the same host at port `8000`; `window.CRICKET_API_BASE_URL` can override that value for a different deployment.

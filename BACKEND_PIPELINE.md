@@ -14,7 +14,7 @@ sequenceDiagram
     participant Lang as Language Detector
     participant Router as Fast-Path Router
     participant RAG as Schema Retriever (Qdrant)
-    participant LLM as Ollama (Qwen 2.5 7B)
+    participant LLM as Ollama (OLLAMA_MODEL)
     participant Guard as Safety & Dry-Run Validator
     participant DB as MariaDB Engine
     participant AnsGen as Answer Generator
@@ -126,7 +126,7 @@ sequenceDiagram
     - `SYSTEM_PROMPT`: Instructions for table relationships, mandatory `Winner > 0` filtering, tie handling, and case sensitivity.
     - `DATABASE SCHEMA`: The retrieved schema context from Step 4.
     - `QUESTION`: The raw user query.
-  - Calls `OllamaLLM(model="qwen2.5:7b", temperature=0)`.
+  - Calls `OllamaLLM(model=OLLAMA_MODEL, temperature=0)`, where `OLLAMA_MODEL` is loaded from the project-root `.env`.
 
 ### Step 6: SQL Sanitization & Guardrails Check
 - **Module**: `backend/sql_generator.py`
@@ -176,7 +176,7 @@ sequenceDiagram
     - Single-column counts and sums format with comma-separated numbers (e.g., *"Database mein total 301 grounds hain."*).
   - **LLM Synthesis**:
     - For multi-column player profiles, tournament rankings, or complex statistical results, formats `ANSWER_PROMPT` with columns and up to 20 rows.
-    - Invokes `qwen2.5:7b` with temperature `0`.
+    - Invokes the configured `OLLAMA_MODEL` with temperature `0`.
     - Filters response using `clean_llm_answer()` to strip quotes, code fences, and any unintended Perso-Arabic unicode characters, enforcing pure Latin script.
 
 ### Step 10: JSON Response Packaging
@@ -208,3 +208,8 @@ sequenceDiagram
 | **Answer Synthesis** | Empty LLM output / truncation | Fallback to deterministic summary extracted directly from row data |
 | **Database Connection** | MariaDB unreachable | API catches exception, logs traceback, returns HTTP 500 |
 
+## 4. Runtime Configuration and Portable Paths
+
+`backend/settings.py` loads `.env` from the repository root regardless of the process working directory. Set database credentials in `.env`; select the Ollama chat model with `OLLAMA_MODEL`, embedding model with `EMBEDDING_MODEL`, and service endpoints with `OLLAMA_BASE_URL` and `QDRANT_URL`. The schema and retained knowledge RAG collections are configured separately as `SCHEMA_COLLECTION` and `KNOWLEDGE_COLLECTION`.
+
+Schema extraction, enrichment, chunking, and indexing resolve their input/output paths from their own source-file locations. No project source path needs to be edited after relocating the checkout. The frontend infers the API host from the browser host and defaults to port `8000`; a `?api=<encoded-api-url>` query parameter can override it.

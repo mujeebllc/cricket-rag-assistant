@@ -1,5 +1,8 @@
-// API Base URL (FastAPI Backend)
-const API_BASE_URL = "http://10.11.119.72:8000";
+// Use the backend on the same host by default; the query string can override its URL.
+const API_PROTOCOL = window.location.protocol === "https:" ? "https:" : "http:";
+const API_HOST = window.location.hostname || "localhost";
+const API_URL_OVERRIDE = new URLSearchParams(window.location.search).get("api");
+const API_BASE_URL = window.CRICKET_API_BASE_URL || API_URL_OVERRIDE || `${API_PROTOCOL}//${API_HOST}:8000`;
 
 // DOM Elements
 const chatMessages = document.getElementById("chatMessages");
@@ -133,7 +136,7 @@ async function sendMessage() {
         checkHealth(); // Update online badge
     } catch (error) {
         hideTypingIndicator();
-        appendAssistantError("Could not connect to the backend server. Please verify that FastAPI is running on http://10.11.119.72:8000.");
+        appendAssistantError(`Could not connect to the backend server. Please verify that FastAPI is running on ${API_BASE_URL}.`);
         setOfflineStatus();
     }
 }
