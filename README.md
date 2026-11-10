@@ -84,13 +84,16 @@ python -m uvicorn main:app --host 0.0.0.0 --port 8000
 
 The API health check is at `http://localhost:8000/`; interactive API documentation is at `http://localhost:8000/docs`.
 
-In another terminal, serve the frontend from the repository root:
+In another terminal, serve the frontend from anywhere inside the repository:
 
 ```powershell
-python -m http.server 3000 --directory frontend
+$repoRoot = (git rev-parse --show-toplevel).Trim()
+python -m http.server 3000 --directory (Join-Path $repoRoot "frontend")
 ```
 
 Open `http://localhost:3000`. The frontend targets port `8000` on the same host by default. For a different API address, use a query parameter such as `http://localhost:3000/?api=http%3A%2F%2Fapi-host%3A8000`.
+
+If you use `python -m http.server 3000 --directory frontend` instead, the `frontend` path is relative to the terminal's current directory. Running it from `backend` points Python at a nonexistent `backend\frontend` directory and returns `404 File not found`. Confirm that `http://localhost:3000/`, `/app.js`, and `/styles.css` all load, and that `http://localhost:8000/` reports the API as healthy.
 
 ## Change models and services
 
