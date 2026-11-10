@@ -1,14 +1,30 @@
 import unittest
+import tempfile
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
+from pathlib import Path
 
 import answer_generator
 import main
+from fastapi.testclient import TestClient
 from rag.knowledge import knowledge_retriever
 from question_router import is_current_match_question, is_general_knowledge_question
 
 
 class ChatApiTests(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.store_path_patch = patch.object(
+            main.conversation_store,
+            "DB_PATH",
+            Path(self.temp_dir.name) / "chat_history.sqlite3",
+        )
+        self.store_path_patch.start()
+
+    def tearDown(self):
+        self.store_path_patch.stop()
+        self.temp_dir.cleanup()
+
     def test_general_cricket_question_uses_knowledge_route_and_returns_source(self):
         question = "How many runs is a six worth?"
         with patch.object(
@@ -117,6 +133,134 @@ class ChatApiTests(unittest.TestCase):
         self.assertIn("not connected", response.answer)
         retrieve.assert_not_called()
         generate_sql.assert_not_called()
+
+    def test_chat_persists_turns_and_resolves_followup_before_sql(self):
+        conversation_id = main.conversation_store.create_conversation()
+        main.conversation_store.append_turn(
+            conversation_id,
+            "Who scored the most runs?",
+            "Aman scored the most runs.",
+            {"sql": "SELECT large_result", "rows": [["excluded from context"]]},
+        )
+        request = main.ChatRequest(
+            question="Which team did he play for?",
+            conversation_id=conversation_id,
+        )
+        with patch.object(
+            main,
+            "resolve_followup_question",
+            return_value="Which team did Aman play for?",
+        ) as resolve, patch.object(
+            main, "generate_sql", return_value="SELECT 'Aman';"
+        ) as generate_sql, patch.object(
+            main,
+            "execute_sql",
+            return_value=(["Team"], [("Pakistan",)], [["Pakistan"]]),
+        ), patch.object(main, "generate_answer", return_value="Pakistan.") as answer:
+            response = main.chat_endpoint(request)
+
+        self.assertEqual(response.question, "Which team did he play for?")
+        self.assertEqual(response.resolved_question, "Which team did Aman play for?")
+        self.assertEqual(response.conversation_id, conversation_id)
+        resolve.assert_called_once()
+        context = resolve.call_args.args[1]
+        self.assertIn("Who scored the most runs?", context)
+        self.assertIn("Aman scored the most runs.", context)
+        self.assertNotIn("excluded from context", context)
+        generate_sql.assert_called_once_with("Which team did Aman play for?")
+        answer.assert_called_once()
+        messages = main.conversation_store.get_messages(conversation_id)
+        self.assertEqual([message["role"] for message in messages], [
+            "user", "assistant", "user", "assistant"
+        ])
+        self.assertEqual(
+            messages[-1]["metadata"]["resolved_question"],
+            "Which team did Aman play for?",
+        )
+
+    def test_context_budget_keeps_only_recent_text_not_response_metadata(self):
+        conversation_id = main.conversation_store.create_conversation()
+        main.conversation_store.append_turn(
+            conversation_id,
+            "Old question",
+            "Old answer",
+            {"rows": [["large result"]]},
+        )
+        main.conversation_store.append_turn(
+            conversation_id,
+            "Recent question",
+            "Recent answer",
+        )
+
+        context = main.conversation_store.get_recent_context(conversation_id, 30)
+
+        self.assertEqual(context, [
+            {"role": "user", "content": "Recent question"},
+            {"role": "assistant", "content": "Recent answer"},
+        ])
+        self.assertLessEqual(sum(len(message["content"]) for message in context), 30)
+
+    def test_context_budget_preserves_previous_question_with_large_assistant_answer(self):
+        conversation_id = main.conversation_store.create_conversation()
+        main.conversation_store.append_turn(
+            conversation_id,
+            "Who scored the most runs?",
+            "A" * 100,
+        )
+
+        context = main.conversation_store.get_recent_context(conversation_id, 40)
+
+        self.assertEqual(context[0]["role"], "user")
+        self.assertEqual(context[0]["content"], "Who scored the most runs?")
+        self.assertLessEqual(sum(len(message["content"]) for message in context), 40)
+
+    def test_conversation_context_is_isolated(self):
+        first_id = main.conversation_store.create_conversation()
+        second_id = main.conversation_store.create_conversation()
+        main.conversation_store.append_turn(first_id, "First chat question", "First chat answer")
+
+        self.assertEqual(
+            main.conversation_store.get_recent_context(second_id, 100),
+            [],
+        )
+
+    def test_conversation_http_endpoints_create_load_chat_and_delete(self):
+        client = TestClient(main.app)
+        created = client.post("/api/conversations")
+        self.assertEqual(created.status_code, 200)
+        conversation_id = created.json()["id"]
+
+        with patch.object(main, "resolve_followup_question", side_effect=lambda q, _: q), patch.object(
+            main, "generate_sql", return_value="SELECT 1;"
+        ), patch.object(
+            main, "execute_sql", return_value=(["Total"], [(1,)], [[1]])
+        ), patch.object(main, "generate_answer", return_value="One."):
+            chat = client.post(
+                "/api/chat",
+                json={"question": "How many matches?", "conversation_id": conversation_id},
+            )
+
+        self.assertEqual(chat.status_code, 200)
+        self.assertEqual(chat.json()["conversation_id"], conversation_id)
+        loaded = client.get(f"/api/conversations/{conversation_id}")
+        self.assertEqual(loaded.status_code, 200)
+        self.assertEqual(
+            [message["role"] for message in loaded.json()["messages"]],
+            ["user", "assistant"],
+        )
+        self.assertEqual(client.get("/api/conversations").json()[0]["id"], conversation_id)
+        self.assertEqual(client.delete(f"/api/conversations/{conversation_id}").status_code, 200)
+        self.assertEqual(client.get(f"/api/conversations/{conversation_id}").status_code, 404)
+
+    def test_conversation_delete_removes_messages_and_unknown_ids_return_404(self):
+        conversation_id = main.conversation_store.create_conversation()
+        main.conversation_store.append_turn(conversation_id, "Question", "Answer")
+
+        self.assertTrue(main.conversation_store.delete_conversation(conversation_id))
+        self.assertFalse(main.conversation_store.conversation_exists(conversation_id))
+        with self.assertRaises(main.HTTPException) as error:
+            main.get_conversation_endpoint(conversation_id)
+        self.assertEqual(error.exception.status_code, 404)
 
 
 if __name__ == "__main__":

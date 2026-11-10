@@ -1,5 +1,6 @@
 import traceback
-from typing import Any, List
+from typing import Any, Dict, List, Optional
+from uuid import UUID
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,10 +9,17 @@ from sqlalchemy import text
 
 # Import functions from existing backend modules
 from sql_generator import generate_sql
-from answer_generator import generate_answer, generate_knowledge_answer, detect_language
+from answer_generator import (
+    detect_language,
+    generate_answer,
+    generate_knowledge_answer,
+    resolve_followup_question,
+)
+import conversation_store
 from database.db import engine
 from question_router import is_current_match_question, is_general_knowledge_question
 from rag.knowledge.knowledge_retriever import retrieve_knowledge
+from settings import CHAT_CONTEXT_MAX_CHARS
 
 app = FastAPI(
     title="AI-Powered Multilingual Cricket Assistant API",
@@ -31,10 +39,31 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     question: str = Field(..., min_length=1, description="User question about cricket")
+    conversation_id: Optional[UUID] = None
+
+
+class ConversationSummary(BaseModel):
+    id: str
+    title: str
+    updated_at: str
+
+
+class ConversationMessage(BaseModel):
+    role: str
+    content: str
+    metadata: Optional[Dict[str, Any]] = None
+    created_at: str
+
+
+class ConversationResponse(BaseModel):
+    id: str
+    messages: List[ConversationMessage]
 
 
 class ChatResponse(BaseModel):
     question: str
+    resolved_question: str
+    conversation_id: str
     language: str
     answer: str
     sql: str
@@ -75,6 +104,54 @@ def health_check():
     }
 
 
+def build_context(messages: List[Dict[str, str]]) -> str:
+    return "\n".join(
+        f"{message['role'].capitalize()}: {message['content']}"
+        for message in messages
+    )
+
+
+def get_conversation_id(conversation_id: Optional[UUID]) -> str:
+    if conversation_id is None:
+        return conversation_store.create_conversation()
+    normalized_id = str(conversation_id)
+    if not conversation_store.conversation_exists(normalized_id):
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return normalized_id
+
+
+@app.post("/api/conversations", response_model=ConversationResponse)
+def create_conversation_endpoint():
+    conversation_id = conversation_store.create_conversation()
+    return ConversationResponse(id=conversation_id, messages=[])
+
+
+@app.get("/api/conversations", response_model=List[ConversationSummary])
+def list_conversations_endpoint():
+    return conversation_store.list_conversations()
+
+
+@app.get(
+    "/api/conversations/{conversation_id}",
+    response_model=ConversationResponse,
+)
+def get_conversation_endpoint(conversation_id: UUID):
+    normalized_id = str(conversation_id)
+    if not conversation_store.conversation_exists(normalized_id):
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return ConversationResponse(
+        id=normalized_id,
+        messages=conversation_store.get_messages(normalized_id),
+    )
+
+
+@app.delete("/api/conversations/{conversation_id}")
+def delete_conversation_endpoint(conversation_id: UUID):
+    if not conversation_store.delete_conversation(str(conversation_id)):
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return {"deleted": True}
+
+
 @app.post("/api/chat", response_model=ChatResponse)
 def chat_endpoint(request: ChatRequest):
     question = request.question.strip()
@@ -82,67 +159,85 @@ def chat_endpoint(request: ChatRequest):
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     try:
+        conversation_id = get_conversation_id(request.conversation_id)
+        recent_context = conversation_store.get_recent_context(
+            conversation_id, CHAT_CONTEXT_MAX_CHARS
+        )
+        resolved_question = resolve_followup_question(
+            question, build_context(recent_context)
+        )
         # 1. Detect language using existing logic
-        lang = detect_language(question)
+        lang = detect_language(resolved_question)
 
-        if is_current_match_question(question):
+        if is_current_match_question(resolved_question):
             answer = (
                 "Live match scores and results are not connected yet."
                 if lang != "roman_urdu"
                 else "Live match scores aur results abhi connected nahi hain."
             )
-            return ChatResponse(
-                question=question,
-                language=lang,
-                answer=answer,
-                sql="",
-                columns=[],
-                rows=[],
-                route="unsupported",
-                sources=[],
-            )
-
-        if is_general_knowledge_question(question):
+            response_data = {
+                "language": lang,
+                "answer": answer,
+                "sql": "",
+                "columns": [],
+                "rows": [],
+                "route": "unsupported",
+                "sources": [],
+            }
+        elif is_general_knowledge_question(resolved_question):
             try:
-                context, sources = retrieve_knowledge(question)
+                context, sources = retrieve_knowledge(resolved_question)
             except Exception as e:
-                print(f"[ERROR] Knowledge retrieval failed for question '{question}': {e}")
+                print(f"[ERROR] Knowledge retrieval failed for question '{resolved_question}': {e}")
                 raise HTTPException(
                     status_code=503,
                     detail="Cricket knowledge is unavailable. Check Qdrant and the knowledge index.",
                 ) from e
 
-            return ChatResponse(
-                question=question,
-                language=lang,
-                answer=generate_knowledge_answer(question, context),
-                sql="",
-                columns=[],
-                rows=[],
-                route="knowledge",
-                sources=sources,
-            )
+            response_data = {
+                "language": lang,
+                "answer": generate_knowledge_answer(resolved_question, context),
+                "sql": "",
+                "columns": [],
+                "rows": [],
+                "route": "knowledge",
+                "sources": sources,
+            }
+        else:
+            sql = generate_sql(resolved_question)
+            if not sql:
+                raise HTTPException(status_code=500, detail="Could not generate valid SQL query.")
 
-        # 2. Generate SQL using existing logic
-        sql = generate_sql(question)
-        if not sql:
-            raise HTTPException(status_code=500, detail="Could not generate valid SQL query.")
+            columns, raw_rows, serialized_rows = execute_sql(sql)
+            response_data = {
+                "language": lang,
+                "answer": generate_answer(resolved_question, sql, columns, raw_rows),
+                "sql": sql,
+                "columns": columns,
+                "rows": serialized_rows,
+                "route": "database",
+                "sources": [],
+            }
 
-        # 3. Execute SQL against MariaDB database
-        columns, raw_rows, serialized_rows = execute_sql(sql)
-
-        # 4. Generate final natural-language answer using existing logic
-        answer = generate_answer(question, sql, columns, raw_rows)
-
+        conversation_store.append_turn(
+            conversation_id,
+            question,
+            response_data["answer"],
+            {
+                "language": response_data["language"],
+                "route": response_data["route"],
+                "sql": response_data["sql"],
+                "columns": response_data["columns"],
+                "rows": response_data["rows"],
+                "sources": response_data["sources"],
+                "resolved_question": resolved_question,
+            },
+        )
         return ChatResponse(
             question=question,
-            language=lang,
-            answer=answer,
-            sql=sql,
-            columns=columns,
-            rows=serialized_rows,
-            route="database",
-            sources=[],
+            resolved_question=resolved_question,
+            conversation_id=conversation_id,
+            **response_data,
         )
     except HTTPException:
         raise

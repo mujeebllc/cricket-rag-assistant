@@ -2,6 +2,12 @@
 
 This project provides a FastAPI cricket question-answering API and a browser UI. Database questions use read-only MariaDB queries, with schema retrieval for complex questions. General cricket rules and terminology use a separate, source-aware knowledge RAG route backed by its own Qdrant collection.
 
+## Chat history and context
+
+The browser keeps conversations in a local SQLite database at `.data/chat_history.sqlite3`. The left sidebar lists conversations and supports starting, switching, and deleting chats; the active conversation is restored after reload. The API also exposes `POST /api/conversations`, `GET /api/conversations`, `GET /api/conversations/{id}`, and `DELETE /api/conversations/{id}`. Existing `/api/chat` clients may omit `conversation_id`; each such request is handled as a new conversation.
+
+Follow-up questions are resolved into standalone questions using only recent messages. The default context budget is 6,000 characters, and stored SQL/result metadata is excluded from that prompt context. Configure `CHAT_HISTORY_DB_PATH` and `CHAT_CONTEXT_MAX_CHARS` in `.env` to change the database path or budget. Without authentication, conversation IDs are not access control; this implementation is intended for a local, single-user deployment.
+
 ## Requirements
 
 - Python 3.10+
@@ -98,6 +104,8 @@ Edit the project-root `.env` file; no Python source changes are needed for suppo
 | `QDRANT_URL` | Qdrant endpoint. |
 | `SCHEMA_COLLECTION` | Collection used by the active schema retriever. |
 | `KNOWLEDGE_COLLECTION` | Collection used by the general-cricket knowledge RAG; it must differ from `SCHEMA_COLLECTION`. |
+| `CHAT_HISTORY_DB_PATH` | SQLite file for local conversation history; defaults to `.data/chat_history.sqlite3` in the project root. |
+| `CHAT_CONTEXT_MAX_CHARS` | Maximum characters of recent transcript included for follow-up resolution; defaults to `6000`. |
 | `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME` | MariaDB/MySQL connection settings. |
 
 `OLLAMA_MODEL` selects an Ollama model identifier, not an arbitrary provider API. Pull the model with `ollama pull <model-tag>` before using it. Embedding model changes require regenerating and re-indexing vectors so the stored vectors match the model.

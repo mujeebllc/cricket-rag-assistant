@@ -14,6 +14,7 @@ __pycache__/
 .env
 .env.local
 *.env
+.data/
 
 # Server Logs & Test Outputs
 *.log
@@ -36,4 +37,3 @@ backend/cricket_project_debug.tar.gz
 *.sublime-workspace
 .DS_Store
 Thumbs.db
-

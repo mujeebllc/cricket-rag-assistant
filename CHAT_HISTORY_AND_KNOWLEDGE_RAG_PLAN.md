@@ -49,6 +49,13 @@ Make turns within one chat share useful context, retain conversations across pag
 
 ## Incremental Implementation Phases
 
+### Current implementation status
+
+- Conversation persistence is implemented in a separate local SQLite store. The API supports create/list/load/delete, and `/api/chat` accepts an optional conversation ID while remaining compatible with clients that omit it.
+- The frontend restores the active conversation, supports switching, starting a new chat, and deleting the selected conversation with confirmation.
+- Follow-up resolution uses only the latest transcript text within `CHAT_CONTEXT_MAX_CHARS` (default 6,000). Stored SQL/result metadata is not included in the resolver context.
+- This is single-user local functionality, not an authenticated multi-user history service. Live-model evaluation of ambiguous follow-ups and the broader knowledge-RAG plan remain outstanding.
+
 ### Phase 0: Baseline and contracts
 
 - Complete or explicitly defer the stabilization plan's test/API baseline work before changing the chat pipeline.

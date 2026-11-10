@@ -14,90 +14,98 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-left">
-                <div class="logo-icon">
-                    <i class="fa-solid fa-baseball-bat-ball"></i>
-                </div>
-                <div class="title-container">
-                    <h1>AI-Powered Multilingual Cricket Assistant</h1>
-                    <p class="subtitle">Text-to-SQL & RAG Analytics • English | Roman Urdu</p>
-                </div>
+        <aside class="chat-sidebar">
+            <button class="sidebar-new-chat" id="newChatBtn" type="button">
+                <i class="fa-solid fa-plus"></i>
+                <span>New chat</span>
+            </button>
+            <div class="sidebar-section-title">Your chats</div>
+            <nav class="conversation-list" id="conversationList" aria-label="Chat history">
+                <div class="conversation-list-status">Loading conversations...</div>
+            </nav>
+            <div class="sidebar-footer">
+                <i class="fa-solid fa-baseball-bat-ball"></i>
+                <span>Cricket Assistant</span>
             </div>
-            <div class="header-right">
-                <div class="api-status-badge" id="apiStatusBadge">
-                    <span class="status-dot"></span>
-                    <span class="status-text" id="statusText">Connecting...</span>
-                </div>
-                <button class="icon-btn" id="clearChatBtn" title="Clear Conversation">
-                    <i class="fa-solid fa-trash-can"></i>
-                    <span>Clear</span>
-                </button>
-            </div>
-        </header>
+        </aside>
 
-        <!-- Main Chat Body -->
-        <main class="chat-main">
-            <div class="chat-messages" id="chatMessages">
-                <!-- Welcome Card -->
-                <div class="welcome-card" id="welcomeCard">
-                    <div class="welcome-icon">
-                        <i class="fa-solid fa-trophy"></i>
+        <div class="chat-workspace">
+            <header class="app-header">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-baseball-bat-ball"></i>
                     </div>
-                    <h2>Welcome to Cricket AI Assistant</h2>
-                    <p>Ask any cricket database question in English or Roman Urdu. The system translates NL to MariaDB SQL and returns real stats!</p>
-                    
-                    <div class="example-chips-header">Try these example questions:</div>
-                    <div class="example-chips">
-                        <button class="chip-btn" data-question="Who is Babar Azam?">
-                            <i class="fa-solid fa-user-gear"></i> Who is Babar Azam?
-                        </button>
-                        <button class="chip-btn" data-question="Babar Azam kon hai?">
-                            <i class="fa-solid fa-comment-dots"></i> Babar Azam kon hai?
-                        </button>
-                        <button class="chip-btn" data-question="How many teams are there?">
-                            <i class="fa-solid fa-users"></i> How many teams are there?
-                        </button>
-                        <button class="chip-btn" data-question="Who scored the most runs?">
-                            <i class="fa-solid fa-fire"></i> Who scored the most runs?
-                        </button>
+                    <div class="title-container">
+                        <h1>AI-Powered Multilingual Cricket Assistant</h1>
+                        <p class="subtitle">Text-to-SQL & RAG Analytics • English | Roman Urdu</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Typing Indicator (Hidden by default) -->
-            <div class="typing-container hidden" id="typingIndicator">
-                <div class="typing-avatar">
-                    <i class="fa-solid fa-robot"></i>
-                </div>
-                <div class="typing-bubble">
-                    <div class="dots-container">
-                        <span class="dot"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
+                <div class="header-right">
+                    <div class="api-status-badge" id="apiStatusBadge">
+                        <span class="status-dot"></span>
+                        <span class="status-text" id="statusText">Connecting...</span>
                     </div>
-                    <span class="typing-label">Analyzing DB schema & generating answer...</span>
                 </div>
-            </div>
-        </main>
+            </header>
 
-        <!-- Footer Input Area -->
-        <footer class="chat-footer">
-            <div class="input-wrapper">
-                <textarea 
-                    id="userInput" 
-                    placeholder="Ask a question about cricket (English or Roman Urdu)..." 
-                    rows="1"
-                    autocomplete="off"></textarea>
-                <button id="sendBtn" class="send-btn" title="Send Question" disabled>
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </div>
-            <div class="footer-note">
-                <span><i class="fa-solid fa-database"></i> Connected to MariaDB & Ollama Qwen2.5:7b</span>
-            </div>
-        </footer>
+            <main class="chat-main">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="welcome-card" id="welcomeCard">
+                        <div class="welcome-icon">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h2>Welcome to Cricket AI Assistant</h2>
+                        <p>Ask any cricket database question in English or Roman Urdu. The system translates NL to MariaDB SQL and returns real stats!</p>
+
+                        <div class="example-chips-header">Try these example questions:</div>
+                        <div class="example-chips">
+                            <button class="chip-btn" data-question="Who is Babar Azam?">
+                                <i class="fa-solid fa-user-gear"></i> Who is Babar Azam?
+                            </button>
+                            <button class="chip-btn" data-question="Babar Azam kon hai?">
+                                <i class="fa-solid fa-comment-dots"></i> Babar Azam kon hai?
+                            </button>
+                            <button class="chip-btn" data-question="How many teams are there?">
+                                <i class="fa-solid fa-users"></i> How many teams are there?
+                            </button>
+                            <button class="chip-btn" data-question="Who scored the most runs?">
+                                <i class="fa-solid fa-fire"></i> Who scored the most runs?
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="typing-container hidden" id="typingIndicator">
+                    <div class="typing-avatar">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="typing-bubble">
+                        <div class="dots-container">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </div>
+                        <span class="typing-label">Analyzing DB schema & generating answer...</span>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="chat-footer">
+                <div class="input-wrapper">
+                    <textarea
+                        id="userInput"
+                        placeholder="Ask a question about cricket (English or Roman Urdu)..."
+                        rows="1"
+                        autocomplete="off"></textarea>
+                    <button id="sendBtn" class="send-btn" title="Send Question" disabled>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+                <div class="footer-note">
+                    <span><i class="fa-solid fa-database"></i> Connected to MariaDB & Ollama Qwen2.5:7b</span>
+                </div>
+            </footer>
+        </div>
     </div>
 
     <script src="app.js"></script>

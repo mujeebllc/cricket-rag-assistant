@@ -8,16 +8,21 @@ const API_BASE_URL = window.CRICKET_API_BASE_URL || API_URL_OVERRIDE || `${API_P
 const chatMessages = document.getElementById("chatMessages");
 const userInput = document.getElementById("userInput");
 const sendBtn = document.getElementById("sendBtn");
-const clearChatBtn = document.getElementById("clearChatBtn");
+const newChatBtn = document.getElementById("newChatBtn");
+const conversationList = document.getElementById("conversationList");
 const typingIndicator = document.getElementById("typingIndicator");
 const apiStatusBadge = document.getElementById("apiStatusBadge");
 const statusText = document.getElementById("statusText");
 const welcomeCard = document.getElementById("welcomeCard");
+const ACTIVE_CONVERSATION_KEY = "cricket-active-conversation";
+let activeConversationId = null;
+let sendingMessage = false;
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", () => {
     checkHealth();
     setupEventListeners();
+    initializeConversationHistory();
 });
 
 // Check Backend Health
@@ -50,7 +55,28 @@ function setupEventListeners() {
     userInput.addEventListener("input", handleInputResize);
     userInput.addEventListener("keydown", handleKeyDown);
     sendBtn.addEventListener("click", sendMessage);
-    clearChatBtn.addEventListener("click", clearChat);
+    newChatBtn.addEventListener("click", async () => {
+        try {
+            await startNewConversation();
+        } catch (error) {
+            appendAssistantError(error.message);
+        }
+    });
+    conversationList.addEventListener("click", event => {
+        const deleteButton = event.target.closest("[data-delete-conversation]");
+        if (deleteButton) {
+            deleteConversation(deleteButton.dataset.deleteConversation).catch(error => {
+                appendAssistantError(error.message);
+            });
+            return;
+        }
+        const conversationButton = event.target.closest("[data-conversation-id]");
+        if (conversationButton && conversationButton.dataset.conversationId !== activeConversationId) {
+            loadConversation(conversationButton.dataset.conversationId).catch(error => {
+                appendAssistantError(error.message);
+            });
+        }
+    });
 
     // Delegate click for example chips
     document.addEventListener("click", (e) => {
@@ -83,19 +109,176 @@ function handleKeyDown(e) {
     }
 }
 
-// Clear Chat
-function clearChat() {
+function resetChatView() {
     chatMessages.innerHTML = "";
     if (welcomeCard) {
         chatMessages.appendChild(welcomeCard);
         welcomeCard.style.display = "block";
     }
+    userInput.value = "";
+    handleInputResize();
+}
+
+async function initializeConversationHistory() {
+    try {
+        const conversations = await fetchConversationList();
+        const savedId = localStorage.getItem(ACTIVE_CONVERSATION_KEY);
+        if (savedId && conversations.some(conversation => conversation.id === savedId)) {
+            await loadConversation(savedId, false);
+        } else {
+            await startNewConversation(false);
+        }
+        await refreshConversationList();
+    } catch (error) {
+        showConversationListError(error.message);
+        appendAssistantError(`Could not load conversation history: ${error.message}`);
+    }
+}
+
+async function fetchConversationList() {
+    const response = await fetch(`${API_BASE_URL}/api/conversations`);
+    if (!response.ok) {
+        throw new Error("The server could not list conversations.");
+    }
+    return response.json();
+}
+
+async function refreshConversationList() {
+    const conversations = await fetchConversationList();
+    conversationList.replaceChildren();
+    if (conversations.length === 0) {
+        const emptyState = document.createElement("div");
+        emptyState.className = "conversation-list-status";
+        emptyState.textContent = "Your conversations will appear here.";
+        conversationList.appendChild(emptyState);
+        return;
+    }
+
+    conversations.forEach(conversation => {
+        const item = document.createElement("div");
+        item.className = "conversation-item";
+        if (conversation.id === activeConversationId) {
+            item.classList.add("active");
+        }
+
+        const selectButton = document.createElement("button");
+        selectButton.type = "button";
+        selectButton.className = "conversation-select-btn";
+        selectButton.dataset.conversationId = conversation.id;
+        selectButton.textContent = conversation.title;
+        selectButton.title = conversation.title;
+        selectButton.setAttribute("aria-current", conversation.id === activeConversationId ? "page" : "false");
+
+        const deleteButton = document.createElement("button");
+        deleteButton.type = "button";
+        deleteButton.className = "conversation-delete-btn";
+        deleteButton.dataset.deleteConversation = conversation.id;
+        deleteButton.title = "Delete conversation";
+        deleteButton.setAttribute("aria-label", `Delete ${conversation.title}`);
+        deleteButton.innerHTML = '<i class="fa-solid fa-trash-can" aria-hidden="true"></i>';
+
+        item.append(selectButton, deleteButton);
+        conversationList.appendChild(item);
+    });
+}
+
+async function loadConversation(conversationId, refreshList = true) {
+    const response = await fetch(`${API_BASE_URL}/api/conversations/${encodeURIComponent(conversationId)}`);
+    if (!response.ok) {
+        throw new Error("The selected conversation could not be loaded.");
+    }
+    const conversation = await response.json();
+    activeConversationId = conversation.id;
+    localStorage.setItem(ACTIVE_CONVERSATION_KEY, activeConversationId);
+    resetChatView();
+    if (conversation.messages.length > 0) {
+        welcomeCard.style.display = "none";
+        conversation.messages.forEach(message => {
+            if (message.role === "user") {
+                appendUserMessage(message.content);
+            } else if (message.role === "assistant") {
+                appendAssistantMessage({
+                    ...(message.metadata || {}),
+                    answer: message.content,
+                });
+            }
+        });
+    }
+    if (refreshList) {
+        await refreshConversationList();
+    }
+}
+
+async function startNewConversation(refreshList = true) {
+    const response = await fetch(`${API_BASE_URL}/api/conversations`, { method: "POST" });
+    if (!response.ok) {
+        throw new Error("The server could not create a conversation.");
+    }
+    const conversation = await response.json();
+    activeConversationId = conversation.id;
+    localStorage.setItem(ACTIVE_CONVERSATION_KEY, activeConversationId);
+    resetChatView();
+    if (refreshList) {
+        await refreshConversationList();
+    }
+}
+
+async function deleteConversation(conversationId) {
+    if (!conversationId || !window.confirm("Delete this conversation and all its messages?")) {
+        return;
+    }
+    setConversationControlsDisabled(true);
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/api/conversations/${encodeURIComponent(conversationId)}`,
+            { method: "DELETE" }
+        );
+        if (!response.ok) {
+            throw new Error("The conversation could not be deleted.");
+        }
+        if (conversationId === activeConversationId) {
+            activeConversationId = null;
+            localStorage.removeItem(ACTIVE_CONVERSATION_KEY);
+            resetChatView();
+            const remaining = await fetchConversationList();
+            if (remaining.length > 0) {
+                await loadConversation(remaining[0].id);
+            } else {
+                await startNewConversation();
+            }
+        } else {
+            await refreshConversationList();
+        }
+    } catch (error) {
+        appendAssistantError(error.message);
+    } finally {
+        setConversationControlsDisabled(false);
+    }
+}
+
+function setConversationControlsDisabled(disabled) {
+    newChatBtn.disabled = disabled;
+    conversationList.querySelectorAll("button").forEach(button => {
+        button.disabled = disabled;
+    });
+}
+
+function showConversationListError(message) {
+    conversationList.replaceChildren();
+    const error = document.createElement("div");
+    error.className = "conversation-list-status error";
+    error.textContent = `Unable to load chats: ${message}`;
+    conversationList.appendChild(error);
 }
 
 // Send Question to API
 async function sendMessage() {
     const question = userInput.value.trim();
-    if (!question) return;
+    if (!question || sendingMessage) return;
+    if (!activeConversationId) {
+        appendAssistantError("Conversation history is not ready. Please try again.");
+        return;
+    }
 
     // Hide welcome card on first message
     if (welcomeCard) {
@@ -109,6 +292,8 @@ async function sendMessage() {
     userInput.value = "";
     userInput.style.height = "auto";
     sendBtn.disabled = true;
+    sendingMessage = true;
+    setConversationControlsDisabled(true);
 
     // Show Typing Indicator
     showTypingIndicator();
@@ -119,7 +304,7 @@ async function sendMessage() {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ question })
+            body: JSON.stringify({ question, conversation_id: activeConversationId })
         });
 
         hideTypingIndicator();
@@ -133,11 +318,19 @@ async function sendMessage() {
 
         const data = await response.json();
         appendAssistantMessage(data);
+        try {
+            await refreshConversationList();
+        } catch (error) {
+            showConversationListError(error.message);
+        }
         checkHealth(); // Update online badge
     } catch (error) {
         hideTypingIndicator();
         appendAssistantError(`Could not connect to the backend server. Please verify that FastAPI is running on ${API_BASE_URL}.`);
         setOfflineStatus();
+    } finally {
+        sendingMessage = false;
+        setConversationControlsDisabled(false);
     }
 }
 

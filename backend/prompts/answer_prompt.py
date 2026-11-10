@@ -41,3 +41,17 @@ Retrieved passages:
 Write a concise answer in the target language. Do not invent current scores, results, dates, or rules absent from the passages.
 
 Answer:"""
+
+
+FOLLOWUP_RESOLUTION_PROMPT = """Rewrite the current user question as a standalone question.
+
+Use the recent conversation only to resolve references or omitted details needed by
+the current question. If it is a new topic, preserve its meaning without importing
+old topics. Do not answer the question. Return only the rewritten question.
+
+Recent conversation:
+{conversation}
+
+Current question: {question}
+
+Standalone question:"""

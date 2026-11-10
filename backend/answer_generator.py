@@ -1,7 +1,11 @@
 import re
 from datetime import datetime, date
 from langchain_ollama import OllamaLLM
-from prompts.answer_prompt import ANSWER_PROMPT, KNOWLEDGE_ANSWER_PROMPT
+from prompts.answer_prompt import (
+    ANSWER_PROMPT,
+    FOLLOWUP_RESOLUTION_PROMPT,
+    KNOWLEDGE_ANSWER_PROMPT,
+)
 from settings import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 llm = OllamaLLM(
@@ -304,3 +308,18 @@ def generate_knowledge_answer(question, context):
     response = llm.invoke(prompt)
     answer = clean_llm_answer(response, lang)
     return answer or "The indexed cricket sources do not provide enough information to answer that."
+
+
+def resolve_followup_question(question, conversation):
+    if not conversation:
+        return question
+
+    prompt = FOLLOWUP_RESOLUTION_PROMPT.format(
+        conversation=conversation,
+        question=question,
+    )
+    response = llm.invoke(prompt)
+    resolved_question = str(response).strip().strip('"').strip()
+    if not resolved_question:
+        raise RuntimeError("The model returned an empty follow-up resolution.")
+    return resolved_question

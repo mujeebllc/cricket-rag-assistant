@@ -21,6 +21,13 @@ EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "BAAI/bge-m3")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 SCHEMA_COLLECTION = os.getenv("SCHEMA_COLLECTION", "cricket_schema")
 KNOWLEDGE_COLLECTION = os.getenv("KNOWLEDGE_COLLECTION", "cricket_knowledge")
+CHAT_HISTORY_DB_PATH = Path(
+    os.getenv("CHAT_HISTORY_DB_PATH", PROJECT_ROOT / ".data" / "chat_history.sqlite3")
+)
+CHAT_CONTEXT_MAX_CHARS = int(os.getenv("CHAT_CONTEXT_MAX_CHARS", "6000"))
+
+if CHAT_CONTEXT_MAX_CHARS < 1:
+    raise ValueError("CHAT_CONTEXT_MAX_CHARS must be a positive integer.")
 
 
 def get_database_url() -> URL:
