@@ -11,7 +11,7 @@ The Cricket Assistant is a specialized **Natural Language to SQL (NL2SQL)** plat
 The active API combines deterministic speed with generative intelligence:
 - Common, formulaic queries execute via **high-speed deterministic pattern matching** in sub-milliseconds.
 - Open-ended, conversational, and complex ad-hoc queries route to a **schema RAG pipeline** backed by dense schema embeddings, dependency injection, and a configurable Ollama model.
-- A separate cricket-knowledge RAG remains in `backend/rag/knowledge/` for future use; it uses its own collection and is not part of the active API flow.
+- General cricket rules and terminology route to a **separate knowledge RAG pipeline** with passage-level retrieval, relevance filtering, source metadata, and grounded answer generation.
 
 ---
 
@@ -34,11 +34,13 @@ graph TB
         LangDetector["Language Detection Engine (detect_language)"]
         Router{"Query Router"}
         FastPath["Deterministic Rule Engine"]
+        KnowledgeRoute["General Cricket Knowledge Route"]
     end
 
     subgraph RAG_Engine ["RAG & Knowledge Retrieval"]
         Embedder["SentenceTransformer (BAAI/bge-m3)"]
         Qdrant[("Qdrant Vector DB (cricket_schema: 1024d)")]
+        KnowledgeQdrant[("Qdrant Vector DB (cricket_knowledge)")]
         DepInjector["Query Dependency Injector"]
         SchemaDocs[("Enriched Schema Docs")]
     end
@@ -69,6 +71,9 @@ graph TB
 
     Router -->|Rule Match| FastPath
     FastPath --> Guardrails
+    Router -->|General rules / terminology| KnowledgeRoute
+    KnowledgeRoute --> KnowledgeQdrant
+    KnowledgeQdrant --> LLMAnswer
 
     Router -->|Unmatched / Complex| Embedder
     Embedder -->|Dense Vector| Qdrant

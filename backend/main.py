@@ -8,8 +8,10 @@ from sqlalchemy import text
 
 # Import functions from existing backend modules
 from sql_generator import generate_sql
-from answer_generator import generate_answer, detect_language
+from answer_generator import generate_answer, generate_knowledge_answer, detect_language
 from database.db import engine
+from question_router import is_current_match_question, is_general_knowledge_question
+from rag.knowledge.knowledge_retriever import retrieve_knowledge
 
 app = FastAPI(
     title="AI-Powered Multilingual Cricket Assistant API",
@@ -38,6 +40,8 @@ class ChatResponse(BaseModel):
     sql: str
     columns: List[str]
     rows: List[List[Any]]
+    route: str = "database"
+    sources: List[str] = Field(default_factory=list)
 
 
 def serialize_cell(val: Any) -> Any:
@@ -81,6 +85,44 @@ def chat_endpoint(request: ChatRequest):
         # 1. Detect language using existing logic
         lang = detect_language(question)
 
+        if is_current_match_question(question):
+            answer = (
+                "Live match scores and results are not connected yet."
+                if lang != "roman_urdu"
+                else "Live match scores aur results abhi connected nahi hain."
+            )
+            return ChatResponse(
+                question=question,
+                language=lang,
+                answer=answer,
+                sql="",
+                columns=[],
+                rows=[],
+                route="unsupported",
+                sources=[],
+            )
+
+        if is_general_knowledge_question(question):
+            try:
+                context, sources = retrieve_knowledge(question)
+            except Exception as e:
+                print(f"[ERROR] Knowledge retrieval failed for question '{question}': {e}")
+                raise HTTPException(
+                    status_code=503,
+                    detail="Cricket knowledge is unavailable. Check Qdrant and the knowledge index.",
+                ) from e
+
+            return ChatResponse(
+                question=question,
+                language=lang,
+                answer=generate_knowledge_answer(question, context),
+                sql="",
+                columns=[],
+                rows=[],
+                route="knowledge",
+                sources=sources,
+            )
+
         # 2. Generate SQL using existing logic
         sql = generate_sql(question)
         if not sql:
@@ -98,7 +140,9 @@ def chat_endpoint(request: ChatRequest):
             answer=answer,
             sql=sql,
             columns=columns,
-            rows=serialized_rows
+            rows=serialized_rows,
+            route="database",
+            sources=[],
         )
     except HTTPException:
         raise

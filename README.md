@@ -1,8 +1,6 @@
 # Cricket RAG Assistant
 
-This project provides a FastAPI cricket question-answering API and a browser UI. The active API translates questions to read-only MariaDB queries, uses schema retrieval for complex questions, and returns both query results and a natural-language answer. It uses Ollama for text generation and Qdrant for schema retrieval.
-
-The second, cricket-knowledge RAG implementation is retained in `backend/rag/knowledge/` for future use. It uses its own Qdrant collection and is not removed or folded into the active API flow.
+This project provides a FastAPI cricket question-answering API and a browser UI. Database questions use read-only MariaDB queries, with schema retrieval for complex questions. General cricket rules and terminology use a separate, source-aware knowledge RAG route backed by its own Qdrant collection.
 
 ## Requirements
 
@@ -60,6 +58,16 @@ python -m rag.store_embeddings
 
 These scripts read and write beside their own source files, so they do not depend on the current working directory.
 
+### Index cricket knowledge RAG
+
+Run from the `backend` directory after editing the knowledge files:
+
+```powershell
+python -m rag.knowledge.index_knowledge
+```
+
+This recreates `KNOWLEDGE_COLLECTION`; the indexer refuses to run if that collection is configured to match `SCHEMA_COLLECTION`. Retrieved passages below the relevance threshold are not sent to the answer model.
+
 ## Run the application
 
 Start the API from the `backend` directory:
@@ -89,7 +97,7 @@ Edit the project-root `.env` file; no Python source changes are needed for suppo
 | `EMBEDDING_MODEL` | Sentence-Transformers model for schema and knowledge RAG. Re-index Qdrant collections if changing embedding models. |
 | `QDRANT_URL` | Qdrant endpoint. |
 | `SCHEMA_COLLECTION` | Collection used by the active schema retriever. |
-| `KNOWLEDGE_COLLECTION` | Separate collection reserved for the retained cricket-knowledge RAG. |
+| `KNOWLEDGE_COLLECTION` | Collection used by the general-cricket knowledge RAG; it must differ from `SCHEMA_COLLECTION`. |
 | `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME` | MariaDB/MySQL connection settings. |
 
 `OLLAMA_MODEL` selects an Ollama model identifier, not an arbitrary provider API. Pull the model with `ollama pull <model-tag>` before using it. Embedding model changes require regenerating and re-indexing vectors so the stored vectors match the model.
@@ -100,7 +108,7 @@ Edit the project-root `.env` file; no Python source changes are needed for suppo
 - `backend/sql_generator.py`, `backend/answer_generator.py`: active SQL generation and answer generation.
 - `backend/settings.py`: loads root `.env` and centralizes service/model configuration.
 - `backend/rag/retriever.py`: active schema RAG retriever.
-- `backend/rag/knowledge/`: retained, separate knowledge RAG implementation.
+- `backend/rag/knowledge/`: active general-cricket corpus, indexer, and retriever.
 - `backend/rag/schema_chunks/`: checked-in schema input for indexing.
 - `database/`: database dump.
 - `frontend/`: static browser client.
@@ -122,7 +130,7 @@ From `backend`, use the existing scripts as needed:
 
 ```powershell
 python accuracy_test.py
-python run_unseen_30_test.py
+python run_accuracy_regression_suite.py
 python overall_accuracy_test.py
 ```
 

@@ -173,6 +173,9 @@ function appendAssistantMessage(data) {
     if (data.sql || (data.columns && data.columns.length > 0)) {
         technicalDetailsHtml = buildTechnicalDetails(data);
     }
+    const sourcesHtml = data.sources && data.sources.length > 0
+        ? `<div class="source-citations"><span>Sources:</span> ${data.sources.map(escapeHtml).join(", ")}</div>`
+        : "";
 
     messageRow.innerHTML = `
         <div class="avatar">
@@ -183,6 +186,7 @@ function appendAssistantMessage(data) {
             <div class="message-bubble">
                 ${escapeHtml(answerText)}
             </div>
+            ${sourcesHtml}
             ${technicalDetailsHtml}
         </div>
     `;

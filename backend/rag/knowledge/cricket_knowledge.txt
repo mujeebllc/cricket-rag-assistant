@@ -10,6 +10,10 @@ A T20I match consists of 20 overs per side.
 
 A cricket team has eleven players on the field.
 
+An over consists of six legal deliveries. A no-ball or wide is an extra delivery and does not count as one of the six legal deliveries in the over.
+
+In ordinary scoring, a batter earns six runs when the ball is hit over the boundary without bouncing, and four runs when it reaches the boundary after bouncing.
+
 The batting team tries to score runs, while the bowling and fielding team tries to dismiss the batters and restrict the number of runs.
 
 A boundary scored by hitting the ball to the boundary without bouncing is worth six runs.
@@ -19,5 +23,23 @@ A boundary where the ball reaches the boundary after bouncing is worth four runs
 A wicket is the dismissal of a batter.
 
 Common ways of dismissal include bowled, caught, leg before wicket (LBW), run out, stumped, and hit wicket.
+
+LBW means leg before wicket. The decision depends on where the ball pitches, where it strikes the batter, whether it would hit the stumps, and other conditions in the Laws of Cricket.
+
+A wide is an illegal delivery judged too far from the batter to be played with a normal stroke. A no-ball is an illegal delivery under one of the conditions in the Laws of Cricket. Both normally add an extra run and require another delivery, subject to the applicable scoring rules.
+
+A maiden over is an over in which no runs are credited to the bowler. It can still contain byes, leg-byes, or penalty runs.
+
+A yorker is a delivery aimed at pitching close to the batter's feet, often near the base of the stumps.
+
+A bouncer is a short-pitched delivery that rises toward the batter after bouncing.
+
+A googly is a leg-spinner's variation that turns in the opposite direction to a conventional leg-break.
+
+A doosra is an off-spinner's variation intended to turn in the opposite direction to a conventional off-break.
+
+In limited-overs cricket, a powerplay is a period with fielding restrictions. The number and timing of powerplay overs depend on the competition's playing conditions.
+
+On-field umpires apply the Laws of Cricket and make decisions during a match. Some competitions also use a third umpire to review specific decisions with video technology.
 
 The International Cricket Council (ICC) is the global governing body for international cricket.

@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams, PointStruct
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from settings import EMBEDDING_MODEL, KNOWLEDGE_COLLECTION, QDRANT_URL
+from settings import EMBEDDING_MODEL, KNOWLEDGE_COLLECTION, QDRANT_URL, SCHEMA_COLLECTION
 
 
 # ============================================================
@@ -15,6 +15,8 @@ from settings import EMBEDDING_MODEL, KNOWLEDGE_COLLECTION, QDRANT_URL
 KNOWLEDGE_DIR = Path(__file__).parent
 
 COLLECTION_NAME = KNOWLEDGE_COLLECTION
+if COLLECTION_NAME == SCHEMA_COLLECTION:
+    raise RuntimeError("KNOWLEDGE_COLLECTION must not match SCHEMA_COLLECTION.")
 
 
 # ============================================================
@@ -40,21 +42,16 @@ client = QdrantClient(url=QDRANT_URL)
 # ============================================================
 
 documents = []
-
 for file_path in KNOWLEDGE_DIR.glob("*.txt"):
-
-    if file_path.name == "cricket_knowledge.txt":
-
-        print(f"Reading: {file_path.name}")
-
-        text = file_path.read_text(
-            encoding="utf-8"
-        )
-
+    print(f"Reading: {file_path.name}")
+    text = file_path.read_text(encoding="utf-8")
+    paragraphs = [paragraph.strip() for paragraph in text.split("\n\n") if paragraph.strip()]
+    for section, paragraph in enumerate(paragraphs, start=1):
         documents.append(
             {
                 "file": file_path.name,
-                "text": text
+                "title": f"{file_path.stem.replace('_', ' ').title()} #{section}",
+                "text": paragraph,
             }
         )
 
@@ -64,18 +61,12 @@ for file_path in KNOWLEDGE_DIR.glob("*.txt"):
 # ============================================================
 
 if not documents:
+    print("No knowledge passages found.")
+    sys.exit(1)
 
-    print("No knowledge documents found.")
-
-    exit()
-
-
-print(
-    f"\nFound {len(documents)} knowledge document(s)."
-)
+print(f"\nFound {len(documents)} knowledge passage(s).")
 
 
-# ============================================================
 # CREATE EMBEDDINGS
 # ============================================================
 
@@ -87,9 +78,7 @@ texts = [
 
 print("\nCreating embeddings...")
 
-vectors = model.encode(
-    texts
-).tolist()
+vectors = model.encode(texts, show_progress_bar=True).tolist()
 
 print("Embeddings created!")
 
@@ -104,17 +93,12 @@ print(
 )
 
 
-client.recreate_collection(
+if client.collection_exists(collection_name=COLLECTION_NAME):
+    client.delete_collection(collection_name=COLLECTION_NAME)
 
+client.create_collection(
     collection_name=COLLECTION_NAME,
-
-    vectors_config=VectorParams(
-
-        size=len(vectors[0]),
-
-        distance=Distance.COSINE
-
-    )
+    vectors_config=VectorParams(size=len(vectors[0]), distance=Distance.COSINE),
 )
 
 
@@ -138,6 +122,8 @@ for index, document in enumerate(documents):
             payload={
 
                 "file": document["file"],
+                "title": document["title"],
+                "section": index,
 
                 "text": document["text"]
 
@@ -166,7 +152,7 @@ print(
 )
 
 print(
-    "Knowledge documents indexed successfully!"
+    "Knowledge passages indexed successfully!"
 )
 
 print(
@@ -174,7 +160,7 @@ print(
 )
 
 print(
-    f"Documents indexed: {len(points)}"
+    f"Passages indexed: {len(points)}"
 )
 
 print(

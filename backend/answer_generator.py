@@ -1,7 +1,7 @@
 import re
 from datetime import datetime, date
 from langchain_ollama import OllamaLLM
-from prompts.answer_prompt import ANSWER_PROMPT
+from prompts.answer_prompt import ANSWER_PROMPT, KNOWLEDGE_ANSWER_PROMPT
 from settings import OLLAMA_BASE_URL, OLLAMA_MODEL
 
 llm = OllamaLLM(
@@ -204,6 +204,50 @@ def generate_answer(question, sql, columns, rows):
         else:
             return f"The total is {value:,}."
 
+    if "best bowling" in question_lower and "innings" in question_lower and "Wickets" in columns:
+        player_index = columns.index("PlayerName") if "PlayerName" in columns else 0
+        wickets_index = columns.index("Wickets")
+        best_wickets = max(row[wickets_index] for row in rows if row[wickets_index] is not None)
+        best_names = list(dict.fromkeys(
+            str(row[player_index])
+            for row in rows
+            if row[wickets_index] == best_wickets and row[player_index] is not None
+        ))
+
+        if best_names:
+            if len(best_names) == 1:
+                names_text = best_names[0]
+            elif len(best_names) == 2:
+                names_text = f"{best_names[0]} and {best_names[1]}"
+            else:
+                names_text = f"{', '.join(best_names[:-1])}, and {best_names[-1]}"
+
+            if lang == "roman_urdu":
+                return f"{names_text} ne aik innings mein sab se zyada {best_wickets} wickets liye."
+            if len(best_names) == 1:
+                return f"{best_names[0]} recorded the most wickets in an innings, with {best_wickets}."
+            return f"{names_text} are tied for the most wickets in an innings, with {best_wickets} each."
+
+    if "wins in each tournament" in question_lower and all(
+        column in columns for column in ("TournamentId", "Groupe", "TeamName", "Won")
+    ):
+        tournament_index = columns.index("TournamentId")
+        group_index = columns.index("Groupe")
+        team_index = columns.index("TeamName")
+        wins_index = columns.index("Won")
+        summaries = [
+            f"Tournament {row[tournament_index]} ({row[group_index]}): "
+            f"{row[team_index]} with {row[wins_index]} wins"
+            for row in rows[:8]
+        ]
+        if not summaries:
+            return "No tournament standings were found."
+        remaining_count = max(0, len(rows) - len(summaries))
+        answer = "Top-win teams by tournament: " + "; ".join(summaries)
+        if remaining_count:
+            answer += f"; and {remaining_count} more result(s)"
+        return answer
+
     # LLM-based Natural Language Formatting for Complex / Profile / Ranking Queries
     if lang == "roman_urdu":
         target_lang_str = "Roman Urdu (STRICT REQUIREMENT: Write ONLY in detailed, natural Roman Urdu using Latin script. Do NOT output any Urdu script characters.)"
@@ -244,3 +288,19 @@ def generate_answer(question, sql, columns, rows):
             ans = "No matching records were found."
 
     return ans
+
+
+def generate_knowledge_answer(question, context):
+    if not context or not context.strip():
+        return "The indexed cricket sources do not provide enough information to answer that."
+
+    lang = detect_language(question)
+    target_language = "Roman Urdu using Latin script" if lang == "roman_urdu" else "English"
+    prompt = KNOWLEDGE_ANSWER_PROMPT.format(
+        question=question,
+        target_language=target_language,
+        context=context,
+    )
+    response = llm.invoke(prompt)
+    answer = clean_llm_answer(response, lang)
+    return answer or "The indexed cricket sources do not provide enough information to answer that."

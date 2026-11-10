@@ -79,6 +79,24 @@ def validate_sql_safety(sql):
 # DIRECT DETERMINISTIC RULES (High-speed rules for simple intent)
 # ============================================================
 
+NON_PLAYER_NAME_TERMS = {
+    "all", "and", "against", "average", "best", "between", "by", "century", "city", "club",
+    "compare", "country", "cricket", "during", "each", "every", "except", "fifty", "for",
+    "format", "from", "highest", "in", "innings", "least", "live", "lowest", "match", "most",
+    "of", "on", "or", "only", "per", "player", "players", "registered", "role", "run", "runs",
+    "score", "scorer", "season", "team", "teams", "tournament", "tournaments", "top", "versus",
+    "wicket", "wickets", "with", "without", "worst", "year",
+}
+
+
+def is_simple_entity_name(value):
+    normalized_name = re.sub(r"\s+", " ", value.lower().strip().rstrip("?.!"))
+    if not normalized_name or not re.fullmatch(r"[a-z][a-z .'-]{0,79}", normalized_name):
+        return False
+    name_terms = set(re.findall(r"[a-z]+", normalized_name))
+    return not name_terms.intersection(NON_PLAYER_NAME_TERMS)
+
+
 def generate_direct_database_counts_sql(question):
     q = question.lower().strip()
     if re.search(r"how many matches (?:are|exist) in the database\??$", q):
@@ -99,13 +117,23 @@ def generate_direct_database_counts_sql(question):
         return "SELECT COUNT(*) AS Total FROM tournament WHERE Live = 1;"
     if re.search(r"how many teams (?:are|exist) (?:currently|now)?\s*valid\??$", q):
         return "SELECT COUNT(*) AS Total FROM team WHERE Valid = 1;"
-    if re.search(r"registered.*player|player.*registered", q):
+    if re.fullmatch(
+        r"(?:how many (?:registered )?players?(?: (?:are )?(?:currently )?registered)?|"
+        r"(?:give me )?(?:the )?total number of registered players(?: in the database)?|"
+        r"registered players in the database)[?.!]?",
+        q,
+    ):
         return "SELECT COUNT(*) AS Total FROM player WHERE Registered = 1;"
     if re.search(r"how many players (?:are|exist) in the database\??$", q) or re.search(r"total number of players (?:in|stored)\??$", q) or re.search(r"registered players in the database\??$", q):
         if "registered" in q:
             return "SELECT COUNT(*) AS Total FROM player WHERE Registered = 1;"
         return "SELECT COUNT(*) AS Total FROM player;"
-    if re.search(r"clubs stored|number of clubs|how many clubs", q):
+    if re.fullmatch(
+        r"(?:how many clubs(?: are there| are in the database)?|"
+        r"(?:can you tell me )?(?:what is )?(?:the )?(?:total )?number of clubs(?: stored)?"
+        r"(?: in the (?:system|database))?|(?:total )?clubs stored(?: in the (?:system|database))?)[?.!]?",
+        q,
+    ):
         return "SELECT COUNT(*) AS Total FROM club;"
     return None
 
@@ -121,9 +149,6 @@ def generate_direct_team_info_sql(question):
     if match:
         team_id = int(match.group(1))
         return f"SELECT TeamName FROM team WHERE TeamId = {team_id};"
-
-    if "rawal kings" in q:
-        return "SELECT COUNT(*) AS MatchWins FROM matches WHERE WinnerName LIKE '%Rawal Kings%';"
 
     match_wins_club = re.search(r"how many matches (?:were|have been)?\s*won by (.+?)\??$", q)
     if match_wins_club:
@@ -153,7 +178,11 @@ def generate_direct_team_info_sql(question):
 
 def generate_direct_sixes_fours_sql(question):
     q = question.lower().strip()
-    if re.search(r"how many (?:total )?sixes (?:were|have been) hit in batting_detail\??$", q) or re.search(r"total sixes (?:hit |scored )?in batting_detail", q):
+    if re.fullmatch(
+        r"(?:how many (?:total )?sixes (?:were|have been) hit in batting_detail|"
+        r"total sixes (?:hit|scored) in batting_detail)[?.!]?",
+        q,
+    ):
         return "SELECT SUM(Sixes) AS TotalSixes FROM batting_detail;"
 
     if re.search(r"who (has )?scored the most sixes\??$", q):
@@ -162,6 +191,8 @@ def generate_direct_sixes_fours_sql(question):
     match_sixes = re.match(r"how many sixes has (.+?) scored\??$", q)
     if match_sixes:
         pname = match_sixes.group(1).strip().rstrip("?.!").replace("'", "''")
+        if not is_simple_entity_name(pname):
+            return None
         return f"SELECT SUM(Sixes) AS TotalSixes FROM batting_detail WHERE PlayerId = (SELECT PlayerId FROM player WHERE LOWER(FullName) = LOWER('{pname}') LIMIT 1);"
 
     if re.search(r"who (has )?scored the most fours\??$", q):
@@ -170,6 +201,8 @@ def generate_direct_sixes_fours_sql(question):
     match_fours = re.match(r"how many fours has (.+?) scored\??$", q)
     if match_fours:
         pname = match_fours.group(1).strip().rstrip("?.!").replace("'", "''")
+        if not is_simple_entity_name(pname):
+            return None
         return f"SELECT SUM(bd.Fours) AS TotalFours FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE LOWER(p.FullName) = LOWER('{pname}') OR LOWER(bd.BatsmanName) = LOWER('{pname}');"
     return None
 
@@ -177,7 +210,7 @@ def generate_direct_sixes_fours_sql(question):
 def generate_direct_centuries_fifties_sql(question):
     q = question.lower().strip()
 
-    if re.search(r"highest (?:total )?runs scored in an innings|highest innings total\??$", q):
+    if re.fullmatch(r"(?:(?:what is the )?highest (?:total )?runs scored in an innings|highest innings total)[?.!]?", q):
         return "SELECT SUM(Runs) AS HighestInningsTotal FROM batting_detail GROUP BY MatchNo, Innings ORDER BY HighestInningsTotal DESC LIMIT 1;"
 
     if re.search(r"who (scored|has scored) the second[- ]most centuries\??$", q) or re.search(r"second[- ]most centuries\??$", q):
@@ -186,6 +219,8 @@ def generate_direct_centuries_fifties_sql(question):
     match_cent_player = re.match(r"how many centuries did (.+?) score\??$", q) or re.match(r"how many centuries has (.+?) scored\??$", q)
     if match_cent_player:
         pname = match_cent_player.group(1).strip().rstrip("?.!").replace("'", "''")
+        if not is_simple_entity_name(pname):
+            return None
         return f"SELECT COUNT(*) AS Centuries FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.Runs >= 100 AND (LOWER(p.FullName) = LOWER('{pname}') OR LOWER(bd.BatsmanName) = LOWER('{pname}'));"
 
     if re.search(r"what is the highest number of centuries scored by one player\??$", q) or re.search(r"highest number of centuries\??$", q):
@@ -207,6 +242,8 @@ def generate_direct_centuries_fifties_sql(question):
     match_fifty_player = re.match(r"how many fifties has (.+?) scored\??$", q) or re.match(r"how many fifties did (.+?) score\??$", q)
     if match_fifty_player:
         pname = match_fifty_player.group(1).strip().rstrip("?.!").replace("'", "''")
+        if not is_simple_entity_name(pname):
+            return None
         return f"SELECT COUNT(*) AS Fifties FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.Runs >= 50 AND (LOWER(p.FullName) = LOWER('{pname}') OR LOWER(bd.BatsmanName) = LOWER('{pname}'));"
 
     if re.search(r"who (scored|has scored) the second[- ]most fifties\??$", q) or re.search(r"second[- ]most fifties\??$", q):
@@ -235,6 +272,8 @@ def generate_direct_player_stat_sql(question):
         match = re.match(pattern, question_lower, re.IGNORECASE)
         if match:
             player_name = match.group(1).strip().rstrip("?.!").replace("'", "''")
+            if not is_simple_entity_name(player_name):
+                continue
             sql = (
                 f"SELECT COALESCE(SUM(bd.{column}), 0) AS Total{column} "
                 f"FROM batting_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId "
@@ -273,6 +312,8 @@ def generate_direct_player_profile_sql(question):
         match = re.match(pattern, question_lower, re.IGNORECASE)
         if match:
             player_name = match.group(1).strip().rstrip("?.!").replace("'", "''")
+            if not is_simple_entity_name(player_name):
+                continue
             if column == "*":
                 sql = f"SELECT * FROM player WHERE LOWER(FullName) = LOWER('{player_name}') LIMIT 1;"
             else:
@@ -286,10 +327,14 @@ def generate_direct_rankings_bowling_sql(question):
     if re.search(r"who (?:has )?(?:taken|got) the most wickets\??$", q) or re.search(r"who took the most wickets\??$", q):
         return "SELECT COALESCE(p.FullName, bd.BowlerName) AS PlayerName, SUM(bd.Wickets) AS TotalWickets FROM bowling_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId GROUP BY bd.PlayerId, p.FullName ORDER BY TotalWickets DESC LIMIT 1;"
 
-    if re.search(r"who has the best bowling (?:wickets )?(?:in an innings)?\??$", q) or re.search(r"best bowling wickets in an innings\??$", q):
-        return "SELECT COALESCE(p.FullName, bd.BowlerName) AS PlayerName, bd.Wickets, bd.Runs FROM bowling_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE LOWER(p.FullName) LIKE '%asad raza%' OR bd.Wickets >= 10 ORDER BY bd.Wickets DESC LIMIT 1;"
+    if re.fullmatch(r'(?:who has the )?best bowling(?: wickets)?(?: in an innings)?[?.!]?', q):
+        return "SELECT COALESCE(p.FullName, bd.BowlerName) AS PlayerName, bd.Wickets, bd.Runs FROM bowling_detail bd LEFT JOIN player p ON bd.PlayerId = p.PlayerId WHERE bd.PlayerId IS NOT NULL AND bd.Wickets = (SELECT MAX(Wickets) FROM bowling_detail WHERE PlayerId IS NOT NULL) ORDER BY PlayerName ASC;"
 
-    if re.search(r"how many (?:total )?5-wicket hauls|five-wicket hauls|5 wicket hauls", q):
+    if re.fullmatch(
+        r"how many (?:total )?(?:5|five)[- ]wicket hauls"
+        r'(?: (?:were|have been) (?:recorded|taken))?(?: in bowling_stats)?[?.!]?',
+        q,
+    ):
         return "SELECT SUM(Fivefor) AS Total_Fivefor FROM bowling_stats;"
 
     match_country_runs = re.search(r"which player from (.+?) (?:has scored|scored) the most runs\??$", q)
@@ -383,10 +428,62 @@ def try_execute_sql(sql):
 # MAIN GENERALIZED SQL GENERATOR
 # ============================================================
 
+COMPLEX_QUERY_PATTERNS = (
+    r"\b(?:compar\w*|trend\w*|breakdown|distribution|average|median|percentage|ratio|rate|"
+    r"each|every|per|between|during|since|before|after|across|excluding|except|only|without|"
+    r"versus|vs|and|or)\b",
+    r"\b(?:by|in|for)\s+(?:each|every|season|tournament|format|year|innings|country|team|player|"
+    r"city|district|province|round|stage)\b",
+    r"\b(?:19|20)\d{2}\b",
+    r"\b(?:last|past|previous)\s+\d+\s+(?:matches|seasons|years|innings)\b",
+    r"\bwho is (?:the )?(?:highest|lowest|most|least|top|best|worst)\b",
+)
+
+
+def requires_schema_rag(question):
+    """Return True when the question has scope or analysis a direct rule cannot preserve."""
+    normalized_question = question.lower().strip()
+    return any(re.search(pattern, normalized_question) for pattern in COMPLEX_QUERY_PATTERNS)
+
+
+def generate_per_tournament_most_wins_sql(question, schema):
+    normalized_question = question.lower().strip().rstrip("?.!")
+    if not re.fullmatch(
+        r"(?:which|what) teams? (?:has|have) (?:the )?most (?:match )?wins "
+        r"(?:in|for) (?:each|every) tournament",
+        normalized_question,
+    ):
+        return None
+
+    if "point_table" not in schema.lower():
+        return None
+
+    return (
+        "SELECT pt.TournamentId, pt.Groupe, pt.Team, "
+        "COALESCE("
+        "NULLIF(CONVERT(pt.TeamName USING utf8mb4) COLLATE utf8mb4_unicode_ci, ''), "
+        "CONVERT(t.TeamName USING utf8mb4) COLLATE utf8mb4_unicode_ci, "
+        "(SELECT CONVERT(MAX(CASE WHEN m.Team1 = pt.Team THEN m.Team1Name "
+        "ELSE m.Team2Name END) USING utf8mb4) COLLATE utf8mb4_unicode_ci "
+        "FROM matches m WHERE m.TournamentId = pt.TournamentId "
+        "AND (m.Team1 = pt.Team OR m.Team2 = pt.Team)), "
+        "CONVERT(CONCAT('Team ID ', pt.Team) USING utf8mb4) COLLATE utf8mb4_unicode_ci"
+        ") AS TeamName, "
+        "pt.Won FROM point_table pt LEFT JOIN team t ON t.TeamId = pt.Team "
+        "WHERE pt.Won = (SELECT MAX(candidate.Won) FROM point_table candidate "
+        "WHERE candidate.TournamentId = pt.TournamentId) "
+        "ORDER BY pt.TournamentId, pt.Groupe, TeamName;"
+    )
+
+
 def generate_sql(question):
     print("Question received:", repr(question))
 
-    # Check Deterministic Fast Path Rules
+    # Keep scoped or analytical questions on the schema-grounded generation path.
+    use_schema_rag = requires_schema_rag(question)
+    if use_schema_rag:
+        print("Complex query detected; bypassing deterministic rules and using schema RAG.")
+
     rules = [
         generate_direct_database_counts_sql,
         generate_direct_team_info_sql,
@@ -398,17 +495,26 @@ def generate_sql(question):
         generate_direct_most_runs_sql,
     ]
 
-    for rule_fn in rules:
-        direct_sql = rule_fn(question)
-        if direct_sql:
-            print(f"Using deterministic rule [{rule_fn.__name__}].")
-            return direct_sql
+    if not use_schema_rag:
+        for rule_fn in rules:
+            direct_sql = rule_fn(question)
+            if direct_sql:
+                print(f"Using deterministic rule [{rule_fn.__name__}].")
+                return direct_sql
 
     # General RAG + Qwen 2.5 7B Generation Path
     print("1. Retrieving schema via RAG...")
     start_time = time.time()
     schema = retrieve_schema(question)
     print(f"RAG retrieval time: {time.time() - start_time:.2f}s | Schema length: {len(schema)}")
+
+    schema_grounded_sql = generate_per_tournament_most_wins_sql(question, schema)
+    if schema_grounded_sql:
+        db_error = try_execute_sql(schema_grounded_sql)
+        if db_error is None:
+            print("Using schema-grounded per-tournament wins query.")
+            return schema_grounded_sql
+        print(f"WARNING: Schema-grounded query failed validation: {db_error}")
 
     prompt = f"""
 {SYSTEM_PROMPT}

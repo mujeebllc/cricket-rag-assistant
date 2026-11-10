@@ -75,8 +75,13 @@ DATABASE RELATIONSHIPS & SCHEMA GUIDE:
 - "live_matches" table (MatchNo, Team1, Team2, Team1Name, Team2Name, Status, Title, Date):
   Live ongoing matches.
 
-- "point_table" table (TournamentId, TeamName, MatchesPlayed, Won, Lost, Tie, Draw, NoResult, Points, NetRunRate):
-  Tournament standings.
+- "point_table" table (TournamentId, Type, Groupe, Team, TeamName, Played, Won, Lost, Draw, Tie, Abondoned, WicketsLost, WicketsTaken, RunsFor, RunsAgainst, Points, BonusPoints, RunRate, NetRunRate):
+  One standings row per tournament, group, and team. `Team` is the numeric team ID; `TeamName` may be empty, so join `team.TeamId = point_table.Team`, then use same-tournament `matches.Team1Name` / `matches.Team2Name` as a fallback. If no name exists, label it as a team ID rather than inventing a name.
+
+10. GROUP-WISE TOP WINS:
+   - For "most wins in each tournament", compare each point_table row's `Won` against the maximum `Won` for the same `TournamentId` using a correlated subquery or window function. Return all ties.
+   - Do NOT group by team while selecting `MAX(Won)`: that computes each team's own maximum and does not identify the tournament leader.
+   - Include `Groupe` in the output so teams from separate standings groups are distinguishable.
 
 IMPORTANT AGGREGATION RULE:
 Always GROUP BY numeric ID columns (PlayerId, TeamId, Winner) rather than free-text name columns (BatsmanName, BowlerName, WinnerName) to avoid splitting stats across name spelling variations. Join to player/team afterwards to display the name.

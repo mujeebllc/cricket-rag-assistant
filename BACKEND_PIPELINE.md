@@ -12,7 +12,8 @@ sequenceDiagram
     actor User as User / Browser
     participant API as FastAPI (main.py)
     participant Lang as Language Detector
-    participant Router as Fast-Path Router
+    participant Router as Intent and Fast-Path Router
+    participant Knowledge as Cricket Knowledge RAG
     participant RAG as Schema Retriever (Qdrant)
     participant LLM as Ollama (OLLAMA_MODEL)
     participant Guard as Safety & Dry-Run Validator
@@ -22,6 +23,15 @@ sequenceDiagram
     User->>API: POST /api/chat {"question": "..."}
     API->>Lang: detect_language(question)
     Lang-->>API: "english" | "roman_urdu"
+
+    alt General cricket rules / terminology
+      API->>Knowledge: retrieve_knowledge(question)
+      Knowledge-->>API: Relevant passages + source titles
+      API->>AnsGen: generate_knowledge_answer(question, passages)
+      AnsGen->>LLM: Grounded answer prompt
+      LLM-->>AnsGen: Answer based only on passages
+      API-->>User: ChatResponse (route=knowledge, sources)
+    else Database question
 
     API->>Router: generate_sql(question)
     alt Pattern Matches Deterministic Rule
@@ -67,6 +77,7 @@ sequenceDiagram
     end
 
     API-->>User: ChatResponse (JSON payload)
+    end
 ```
 
 ---

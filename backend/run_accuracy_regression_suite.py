@@ -300,7 +300,11 @@ def run_suite():
 
                 if db_rows:
                     actual_first = db_rows[0][0]
-                    row_text = " | ".join(str(v) for v in db_rows[0]).lower()
+                    row_text = " | ".join(
+                        str(value)
+                        for row in db_rows
+                        for value in row
+                    ).lower()
 
                     if ttype == "count":
                         db_ok = (str(actual_first).strip() == str(exp_val).strip())

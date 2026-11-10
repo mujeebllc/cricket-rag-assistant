@@ -331,6 +331,18 @@ body {
 .lang-badge.urdu { background: rgba(16, 185, 129, 0.15); color: var(--primary); }
 .lang-badge.roman_urdu { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
 
+.source-citations {
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.source-citations span {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
 /* Technical Details Accordion */
 .tech-accordion {
     margin-top: 8px;
