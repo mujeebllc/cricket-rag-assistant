@@ -34,7 +34,7 @@ print("Embedding model loaded!")
 # CONNECT TO QDRANT
 # ============================================================
 
-client = QdrantClient(url=QDRANT_URL)
+client = QdrantClient(url=QDRANT_URL, timeout=60)
 
 
 # ============================================================

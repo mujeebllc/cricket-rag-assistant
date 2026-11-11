@@ -17,7 +17,7 @@ print("Model loaded!")
 # -----------------------------
 # Connect to Qdrant
 # -----------------------------
-client = QdrantClient(url=QDRANT_URL)
+client = QdrantClient(url=QDRANT_URL, timeout=60)
 
 COLLECTION_NAME = SCHEMA_COLLECTION
 
